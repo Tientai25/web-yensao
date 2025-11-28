@@ -94,6 +94,9 @@
   --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
   --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.25);
   --shadow-gold: 0 8px 16px rgba(212, 175, 55, 0.2);
+
+  /* Border / divider color (use grayscale tokens) */
+  --border: var(--color-gray-300);
   
   /* ========== TRANSITIONS ========== */
   --transition-fast: 150ms ease-in-out;
@@ -112,9 +115,34 @@
 /* ========== DARK MODE ========== */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg-primary: #1a1a1a;
-    --color-bg-secondary: #2d2d2d;
-    --color-bg-tertiary: #3a3a3a;
-    --color-dark: #ffffff;
+    /* Softer dark palette to avoid overly-contrasting pitch-black */
+    --color-bg-primary: #0f1720; /* page background */
+    --color-bg-secondary: #111827; /* panels / surfaces */
+    --color-bg-tertiary: #0b1320; /* accents */
+
+    /* Text / neutrals */
+    --color-gray-800: #ececec; /* primary text */
+    --color-gray-700: #d6d6d6;
+    --color-gray-600: #bfbfbf;
+    --color-gray-500: #9f9f9f;
+    --color-gray-400: #7f7f7f;
+    --color-gray-300: #5f5f5f;
+    --color-gray-200: #3f3f3f;
+    --color-light: #0b1220; /* used for light surfaces in components -> becomes dark */
+
+    /* Brand colors — keep warm/gold but brighter on dark */
+    --color-primary: #f2d47a;
+    --color-primary-dark: #d4af37;
+    --color-primary-light: #fde9a6;
+
+    /* Secondary (text headings) */
+    --color-secondary: #f7ecd4;
+
+    /* Scrollbar adjustments for dark */
+    --scrollbar-track: #0b1220;
+    --scrollbar-thumb: #c49e3a;
+
+    /* Border override for dark surfaces */
+    --border: var(--color-gray-300);
   }
 }

@@ -9,19 +9,38 @@
 }
 
 .items { display: flex; flex-direction: column; gap: var(--spacing-lg); }
-.item { display: flex; gap: var(--spacing-md); background: var(--color-bg-primary); padding: var(--spacing-md); border-radius: var(--radius-md); align-items: center; border: 1px solid var(--color-gray-300); }
+.item { display: flex; gap: var(--spacing-md); background: var(--color-bg-secondary); padding: var(--spacing-md); border-radius: var(--radius-md); align-items: center; border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
 .item img { width: 120px; height: 120px; object-fit: cover; border-radius: var(--radius-md); }
-.info h4 { margin: 0 0 var(--spacing-sm) 0; }
+.info h4 { margin: 0 0 var(--spacing-sm) 0; font-size: var(--text-lg); }
 .controls { display: flex; gap: var(--spacing-sm); align-items: center; margin-top: var(--spacing-sm); }
 .controls button { padding: 6px 10px; border-radius: 6px; border: 1px solid var(--color-gray-300); background: transparent; }
+.qty { padding: 0 8px; min-width: 28px; text-align: center; display: inline-block; }
 .price { margin-top: var(--spacing-sm); font-weight: var(--font-bold); color: var(--color-primary); }
 .remove { margin-top: var(--spacing-sm); background: transparent; color: var(--color-error); border: none; cursor: pointer; }
 
-.summary { background: var(--color-bg-primary); padding: var(--spacing-2xl); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--color-gray-300); }
-.total { font-size: var(--text-2xl); font-weight: var(--font-bold); margin-bottom: var(--spacing-md); }
-.checkout { width: 100%; padding: var(--spacing-md); background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%); color: var(--color-secondary); border-radius: var(--radius-md); font-weight: var(--font-bold); }
-.clear { margin-top: var(--spacing-sm); width: 100%; padding: var(--spacing-md); background: transparent; border: 1px solid var(--color-gray-300); border-radius: var(--radius-md); }
+.summary { background: linear-gradient(180deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%); padding: var(--spacing-2xl); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); border: 1px solid var(--border); }
+.summary h3 { margin-top: 0; }
+.total { font-size: var(--text-2xl); font-weight: var(--font-bold); margin-bottom: var(--spacing-md); color: var(--color-dark); }
+.checkout { width: 100%; padding: var(--spacing-md); background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%); color: var(--color-secondary); border-radius: var(--radius-md); font-weight: var(--font-bold); box-shadow: var(--shadow-gold); }
+.clear { margin-top: var(--spacing-sm); width: 100%; padding: var(--spacing-md); background: transparent; border: 1px solid var(--border); border-radius: var(--radius-md); }
+
+.couponBlock { margin-bottom: var(--spacing-md); display: flex; flex-direction: column; gap: var(--spacing-sm); }
+.couponInput { width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--color-gray-300); }
+.apply { margin-top: 6px; padding: 8px 10px; background: var(--color-primary); color: var(--color-secondary); border-radius: var(--radius-sm); border: none; cursor: pointer; }
+.couponApplied { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.removeCoupon { background: transparent; border: none; color: var(--color-error); cursor: pointer; }
+.couponMsg { font-size: var(--text-sm); color: var(--color-gray-600); }
+
+.breakdown { margin-top: var(--spacing-md); border-top: 1px dashed var(--border); padding-top: var(--spacing-md); }
+.row { display:flex; justify-content:space-between; margin-bottom:8px; color: var(--color-gray-700); }
+.rowTotal { display:flex; justify-content:space-between; margin-top: var(--spacing-sm); font-size: var(--text-lg); }
+
+/* Empty state */
+.empty { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-md); padding: var(--spacing-4xl) 0; text-align: center; }
+.empty img { width: 220px; height: auto; border-radius: var(--radius-md); box-shadow: var(--shadow-md); }
+.cta { margin-top: var(--spacing-md); padding: 10px 18px; background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%); color: var(--color-secondary); border-radius: var(--radius-md); text-decoration: none; font-weight: var(--font-bold); }
 
 @media (max-width: 768px) {
   .grid { grid-template-columns: 1fr; }
+  .summary { order: 2; }
 }
