@@ -1,16 +1,33 @@
-# React + Vite
+# Yến Sào - Demo Store
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Trang demo bán yến sào được xây dựng bằng React + Vite. Mục tiêu: giao diện đẹp, component hóa, chuẩn SEO căn bản.
 
-Currently, two official plugins are available:
+Chạy dự án (PowerShell):
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```powershell
+npm install
+npm run dev
+```
 
-## React Compiler
+Build production:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```powershell
+npm run build
+npm run preview
+```
 
-## Expanding the ESLint configuration
+Những thay đổi chính đã thực hiện:
+- Thêm `react-router-dom` và cấu hình routing (/ và /product/:id).
+- Tạo `CartContext` để quản lý giỏ hàng (thêm/xóa/cập nhật số lượng).
+- Thêm trang chi tiết sản phẩm (`src/components/ProductDetail.jsx`).
+- Cấu trúc components tách biệt và CSS Modules cho mỗi component.
+- Thêm `public/robots.txt` và `public/sitemap.xml` cho SEO cơ bản.
+- Thêm ảnh placeholder trong `public/images` (thay bằng ảnh thật khi có).
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Gợi ý tiếp theo (muốn tôi làm):
+- Thêm trang giỏ hàng và checkout
+- Tích hợp thanh toán (VNPay, Momo, Stripe...)
+- Tạo sitemap động và meta tags động cho từng sản phẩm
+- Seo nâng cao: hreflang, structured data chi tiết sản phẩm
+
+Nếu OK, tôi sẽ tiếp tục với: thêm trang giỏ hàng + checkout hoặc tối ưu SEO động — bạn chọn nhé.

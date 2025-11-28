@@ -1,0 +1,118 @@
+.testimonials {
+  background: var(--color-bg-primary);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--spacing-4xl);
+}
+
+.header h2 {
+  margin: 0 0 var(--spacing-lg) 0;
+  font-size: var(--text-4xl);
+}
+
+.header p {
+  font-size: var(--text-lg);
+  color: var(--color-gray-700);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-2xl);
+}
+
+.card {
+  background: var(--color-bg-secondary);
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-gray-300);
+  transition: all var(--transition-base);
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-xl);
+}
+
+.rating {
+  font-size: var(--text-lg);
+  margin-bottom: var(--spacing-md);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.content {
+  font-size: var(--text-base);
+  color: var(--color-gray-800);
+  line-height: var(--line-height-relaxed);
+  margin: 0 0 var(--spacing-lg) 0;
+  flex-grow: 1;
+  font-style: italic;
+}
+
+.author {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--color-gray-300);
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-bold);
+  font-size: var(--text-xl);
+}
+
+.authorInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.name {
+  font-weight: var(--font-bold);
+  color: var(--color-secondary);
+}
+
+.date {
+  font-size: var(--text-sm);
+  color: var(--color-gray-600);
+}
+
+@media (max-width: 768px) {
+  .header h2 {
+    font-size: var(--text-3xl);
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: var(--spacing-xl);
+  }
+}
+
+@media (max-width: 640px) {
+  .header h2 {
+    font-size: var(--text-2xl);
+  }
+
+  .card {
+    padding: var(--spacing-lg);
+  }
+}
