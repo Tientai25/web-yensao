@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { useCart } from '../contexts/CartContext'
-import styles from '../styles/Cart.module.css'
+import cartStyles from '../styles/Cart.module.css'
+import styles from '../styles/Checkout.module.css'
 
 const Checkout = () => {
   const { items, getTotal, clear } = useCart()
@@ -11,16 +12,16 @@ const Checkout = () => {
   const [name, setName] = useState('')
   const [address, setAddress] = useState('')
   const [phone, setPhone] = useState('')
+  const [email, setEmail] = useState('')
+  const [paymentMethod, setPaymentMethod] = useState('bank')
   const navigate = useNavigate()
 
-  const [paymentMethod, setPaymentMethod] = useState('bank')
 
   const handleSubmit = (e) => {
     e.preventDefault()
     if (paymentMethod === 'bank') {
       handleBankPayment()
     } else {
-      // cash on delivery or other
       const order = createOrder('COD')
       saveAndFinish(order)
     }
@@ -66,44 +67,67 @@ const Checkout = () => {
     <>
       <Header />
       <main>
-        <section className={styles.cart}>
+        <section className={styles.checkoutWrap}>
           <div className="container">
-            <h2 className={styles.title}>Thanh Toán</h2>
-            <div className={styles.grid}>
-              <form onSubmit={handleSubmit} style={{display:'grid', gap:'16px'}}>
-                <label>
-                  Họ và tên
-                  <input required value={name} onChange={(e) => setName(e.target.value)} className={styles.couponInput} />
-                </label>
-                <label>
-                  Số điện thoại
-                  <input required value={phone} onChange={(e) => setPhone(e.target.value)} className={styles.couponInput} />
-                </label>
-                <label>
-                  Địa chỉ giao hàng
-                  <textarea required value={address} onChange={(e) => setAddress(e.target.value)} className={styles.couponInput} />
-                </label>
-                <button className={styles.checkout} type="submit">Xác nhận đơn hàng</button>
-              </form>
-
-              <aside className={styles.summary}>
-                <h3>Đơn hàng</h3>
-                <div style={{maxHeight:300, overflow:'auto'}}>
-                  {items.map(it => (
-                    <div key={it.id} style={{display:'flex', justifyContent:'space-between', padding:'8px 0'}}>
-                      <span>{it.name} x{it.qty}</span>
-                      <strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0 }).format(it.price * it.qty)}</strong>
+            <h2 style={{marginBottom:'20px'}}>Thanh Toán</h2>
+            <div className={styles.checkoutGrid}>
+              <div className={styles.card}>
+                <form onSubmit={handleSubmit}>
+                  <div className={styles.formRow}>
+                    <div className={styles.field}>
+                      <label className={styles.label}>Họ và tên</label>
+                      <input className={styles.input} required value={name} onChange={(e) => setName(e.target.value)} />
                     </div>
-                  ))}
+                    <div className={styles.field}>
+                      <label className={styles.label}>Số điện thoại</label>
+                      <input className={styles.input} required value={phone} onChange={(e) => setPhone(e.target.value)} />
+                    </div>
+                  </div>
+
+                  <div className={styles.field}>
+                    <label className={styles.label}>Email (tuỳ chọn)</label>
+                    <input className={styles.input} value={email} onChange={(e) => setEmail(e.target.value)} />
+                  </div>
+
+                  <div className={styles.field}>
+                    <label className={styles.label}>Địa chỉ giao hàng</label>
+                    <textarea className={styles.textarea} required value={address} onChange={(e) => setAddress(e.target.value)} />
+                  </div>
+
+                  <div className={styles.field}>
+                    <label className={styles.label}>Phương thức thanh toán</label>
+                    <div className={styles.paymentMethods}>
+                      <label className={styles.paymentItem}><input type="radio" name="pay" checked={paymentMethod==='bank'} onChange={() => setPaymentMethod('bank')} /> Thanh toán qua Ngân hàng</label>
+                      <label className={styles.paymentItem}><input type="radio" name="pay" checked={paymentMethod==='cod'} onChange={() => setPaymentMethod('cod')} /> Thanh toán khi nhận hàng (COD)</label>
+                    </div>
+                  </div>
+
+                  <div style={{marginTop:12}}>
+                    <button type="submit" className={styles.checkoutBtn}>Thanh toán</button>
+                  </div>
+                </form>
+              </div>
+
+              <div className={styles.summaryBox}>
+                <div className={cartStyles.summary}>
+                  <div className={styles.summaryHeader}>Đơn hàng</div>
+                  <div style={{maxHeight:300, overflow:'auto'}}>
+                    {items.map(it => (
+                      <div key={it.id} style={{display:'flex', justifyContent:'space-between', padding:'8px 0'}}>
+                        <span>{it.name} x{it.qty}</span>
+                        <strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0 }).format(it.price * it.qty)}</strong>
+                      </div>
+                    ))}
+                  </div>
+                  <div className={cartStyles.breakdown} style={{marginTop:12}}>
+                    <div className={cartStyles.row}><span>Tạm tính</span><span>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0 }).format(totals.subtotal)}</span></div>
+                    <div className={cartStyles.row}><span>Giảm giá</span><span>-{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0 }).format(totals.discount)}</span></div>
+                    <div className={cartStyles.row}><span>Phí vận chuyển</span><span>{totals.shipping === 0 ? 'Miễn phí' : new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0 }).format(totals.shipping)}</span></div>
+                    <div className={cartStyles.row}><span>Thuế</span><span>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0 }).format(totals.tax)}</span></div>
+                    <div className={cartStyles.rowTotal}><strong>Tổng</strong><strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0 }).format(totals.total)}</strong></div>
+                  </div>
                 </div>
-                <div className={styles.breakdown} style={{marginTop:12}}>
-                  <div className={styles.row}><span>Tạm tính</span><span>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0 }).format(totals.subtotal)}</span></div>
-                  <div className={styles.row}><span>Giảm giá</span><span>-{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0 }).format(totals.discount)}</span></div>
-                  <div className={styles.row}><span>Phí vận chuyển</span><span>{totals.shipping === 0 ? 'Miễn phí' : new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0 }).format(totals.shipping)}</span></div>
-                  <div className={styles.row}><span>Thuế</span><span>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0 }).format(totals.tax)}</span></div>
-                  <div className={styles.rowTotal}><strong>Tổng</strong><strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0 }).format(totals.total)}</strong></div>
-                </div>
-              </aside>
+              </div>
             </div>
           </div>
         </section>

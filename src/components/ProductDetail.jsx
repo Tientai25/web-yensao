@@ -3,6 +3,9 @@ import { useEffect } from 'react'
 import { products } from '../data/products'
 import { useCart } from '../contexts/CartContext'
 import styles from '../styles/ProductDetail.module.css'
+import ProductCard from './ProductCard'
+import Header from './Header'
+import Footer from './Footer'
 
 const ProductDetail = () => {
   const { id } = useParams()
@@ -35,36 +38,56 @@ const ProductDetail = () => {
   }, [product])
 
   return (
-    <section className={styles.detail}>
-      <div className="container">
-        <div className={styles.grid}>
-          <div className={styles.imageCol}>
-            <img src={product.image} alt={product.name} />
-          </div>
-          <div className={styles.infoCol}>
-            <h1>{product.name}</h1>
-            <p className={styles.category}>{product.category}</p>
-            <div className={styles.pricing}>
-              <div className={styles.price}>{formatPrice(product.price)}</div>
-              <div className={styles.original}>{formatPrice(product.originalPrice)}</div>
+    <>
+      <Header />
+      <main>
+        <section className={styles.detail}>
+          <div className="container">
+            <div className={styles.grid}>
+              <div className={styles.imageCol}>
+                <img src={product.image} alt={product.name} />
+              </div>
+              <div className={styles.infoCol}>
+                <h1>{product.name}</h1>
+                <p className={styles.category}>{product.category}</p>
+                <div className={styles.pricing}>
+                  <div className={styles.price}>{formatPrice(product.price)}</div>
+                  <div className={styles.original}>{formatPrice(product.originalPrice)}</div>
+                </div>
+
+                <p className={styles.description}>{product.description}</p>
+
+                <ul className={styles.benefits}>
+                  {product.benefits.map((b, i) => <li key={i}>✓ {b}</li>)}
+                </ul>
+
+                <div className={styles.actions}>
+                  <button className={styles.buy} onClick={() => addItem(product)} disabled={!product.inStock}>
+                    {product.inStock ? '🛒 Thêm vào giỏ' : 'Hết hàng'}
+                  </button>
+                  <Link to="/products" className={styles.back}>← Quay về</Link>
+                </div>
+              </div>
             </div>
-
-            <p className={styles.description}>{product.description}</p>
-
-            <ul className={styles.benefits}>
-              {product.benefits.map((b, i) => <li key={i}>✓ {b}</li>)}
-            </ul>
-
-            <div className={styles.actions}>
-              <button className={styles.buy} onClick={() => addItem(product)} disabled={!product.inStock}>
-                {product.inStock ? '🛒 Thêm vào giỏ' : 'Hết hàng'}
-              </button>
-              <Link to="/" className={styles.back}>← Quay về</Link>
+          </div>
+        </section>
+      
+        <section className={styles.related}>
+          <div className="container">
+            <h3>Sản phẩm liên quan</h3>
+            <div className={styles.relatedGrid}>
+              {products
+                .filter((p) => p.category === product.category && p.id !== product.id)
+                .slice(0, 4)
+                .map((p) => (
+                  <ProductCard key={p.id} product={p} />
+                ))}
             </div>
           </div>
-        </div>
-      </div>
-    </section>
+        </section>
+      </main>
+      <Footer />
+    </>
   )
 }
 

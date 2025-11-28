@@ -1,32 +1,37 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import styles from '../styles/Header.module.css';
 import { useCart } from '../contexts/CartContext'
 
 const Header = () => {
   const { items } = useCart()
   const cartCount = items.reduce((s, it) => s + (it.qty || 0), 0)
+  const navigate = useNavigate()
+  const location = useLocation()
+
   const handleScroll = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+    // If already on home page, scroll to element
+    if (location.pathname === '/') {
+      const element = document.getElementById(id)
+      if (element) element.scrollIntoView({ behavior: 'smooth' })
+      return
     }
-  };
+    // Otherwise navigate to home with a scroll query param
+    navigate(`/?scroll=${id}`)
+  }
 
   return (
     <header className={styles.header}>
       <div className="container">
         <div className={styles.wrapper}>
           <div className={styles.logo}>
-            <h1>🦆 Yến Sào</h1>
+            <Link to="/" className={styles.logoLink} aria-label="Trang chủ">
+              <h1>🦆 Yến Sào</h1>
+            </Link>
           </div>
 
           <nav className={styles.nav}>
-            <button 
-              onClick={() => handleScroll('products')}
-              className={styles.navLink}
-            >
-              Sản Phẩm
-            </button>
+            <Link to="/products" className={styles.navLink}>Sản Phẩm</Link>
+            <Link to="/about" className={styles.navLink}>Về Chúng Tôi</Link>
             <button 
               onClick={() => handleScroll('benefits')}
               className={styles.navLink}
@@ -39,12 +44,7 @@ const Header = () => {
             >
               Đánh Giá
             </button>
-            <button 
-              onClick={() => handleScroll('faq')}
-              className={styles.navLink}
-            >
-              FAQ
-            </button>
+            <Link to="/faq" className={styles.navLink}>FAQ</Link>
             <button 
               onClick={() => handleScroll('contact')}
               className={styles.ctaButton}

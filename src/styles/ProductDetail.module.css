@@ -49,3 +49,13 @@
   .grid { grid-template-columns: 1fr; }
   .infoCol h1 { font-size: var(--text-2xl); }
 }
+
+.related {
+  margin-top: var(--spacing-3xl);
+}
+.related h3 { margin-bottom: var(--spacing-md); }
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--spacing-lg);
+}
