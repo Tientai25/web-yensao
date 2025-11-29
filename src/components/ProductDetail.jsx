@@ -37,44 +37,108 @@ const ProductDetail = () => {
     }
   }, [product])
 
+  const renderStars = (rating) => {
+    const stars = []
+    const fullStars = Math.floor(rating)
+    const hasHalfStar = rating % 1 !== 0
+    
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<span key={i} className={styles.star}>⭐</span>)
+    }
+    if (hasHalfStar) {
+      stars.push(<span key="half" className={styles.star}>⭐</span>)
+    }
+    return stars
+  }
+
   return (
     <>
       <Header />
-      <main>
+      <main className={styles.main}>
         <section className={styles.detail}>
           <div className="container">
             <div className={styles.grid}>
               <div className={styles.imageCol}>
-                <img src={product.image} alt={product.name} />
+                <div className={styles.imageWrapper}>
+                  <img src={product.image} alt={product.name} />
+                  {!product.inStock && (
+                    <div className={styles.outOfStock}>Hết hàng</div>
+                  )}
+                </div>
               </div>
               <div className={styles.infoCol}>
+                <div className={styles.breadcrumb}>
+                  <Link to="/products">Sản phẩm</Link> / <span>{product.name}</span>
+                </div>
                 <h1>{product.name}</h1>
+                
+                <div className={styles.ratingSection}>
+                  <div className={styles.rating}>
+                    {renderStars(product.rating)}
+                    <span className={styles.ratingValue}>{product.rating}</span>
+                  </div>
+                  <span className={styles.reviews}>({product.reviews} đánh giá)</span>
+                </div>
+
                 <p className={styles.category}>{product.category}</p>
+                
                 <div className={styles.pricing}>
                   <div className={styles.price}>{formatPrice(product.price)}</div>
                   <div className={styles.original}>{formatPrice(product.originalPrice)}</div>
+                  <div className={styles.discount}>
+                    -{Math.round((1 - product.price / product.originalPrice) * 100)}%
+                  </div>
                 </div>
 
                 <p className={styles.description}>{product.description}</p>
 
-                <ul className={styles.benefits}>
-                  {product.benefits.map((b, i) => <li key={i}>✓ {b}</li>)}
-                </ul>
+                <div className={styles.benefitsSection}>
+                  <h3>Lợi ích sản phẩm</h3>
+                  <ul className={styles.benefits}>
+                    {product.benefits.map((b, i) => (
+                      <li key={i}>
+                        <span className={styles.checkIcon}>✓</span>
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
                 <div className={styles.actions}>
-                  <button className={styles.buy} onClick={() => addItem(product)} disabled={!product.inStock}>
-                    {product.inStock ? '🛒 Thêm vào giỏ' : 'Hết hàng'}
+                  <button 
+                    className={styles.buy} 
+                    onClick={() => addItem(product)} 
+                    disabled={!product.inStock}
+                  >
+                    {product.inStock ? '🛒 Thêm vào giỏ hàng' : 'Hết hàng'}
                   </button>
-                  <Link to="/products" className={styles.back}>← Quay về</Link>
+                  <Link to="/products" className={styles.back}>← Quay về danh sách</Link>
                 </div>
               </div>
             </div>
           </div>
         </section>
+
+        {product.article && (
+          <section className={styles.articleSection}>
+            <div className="container">
+              <div className={styles.articleContent}>
+                <h2 className={styles.articleTitle}>{product.article.title}</h2>
+                <div className={styles.articleBody}>
+                  {product.article.content.map((paragraph, index) => (
+                    <p key={index} className={styles.articleParagraph}>
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
       
         <section className={styles.related}>
           <div className="container">
-            <h3>Sản phẩm liên quan</h3>
+            <h2 className={styles.relatedTitle}>Sản phẩm liên quan</h2>
             <div className={styles.relatedGrid}>
               {products
                 .filter((p) => p.category === product.category && p.id !== product.id)

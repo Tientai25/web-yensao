@@ -9,12 +9,6 @@
   animation: fadeIn 0.5s ease-out forwards;
 }
 
-.contactForm {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
 /* Form Group */
 .formGroup {
   margin-bottom: 1.5rem;
@@ -25,7 +19,7 @@
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
-  color: #2c3e50;
+  color: var(--color-secondary);
   font-size: 0.95rem;
 }
 
@@ -33,15 +27,18 @@
 .formGroup textarea {
   width: 100%;
   padding: 0.9rem 1.2rem;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background-color: #fff;
+  background-color: var(--color-bg-primary);
   font-family: inherit;
   line-height: 1.5;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-gray-800);
 }
+
+/* Duplicate styles removed - using main styles above */
 
 .formGroup textarea {
   min-height: 150px;
@@ -53,55 +50,85 @@
 
 .formGroup input:focus,
 .formGroup textarea:focus {
-  border-color: #e74c3c;
-  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
   outline: none;
+  background-color: var(--color-bg-primary);
 }
 
 /* Required Field Indicator */
 .required {
-  color: #e74c3c;
+  color: var(--color-error);
   margin-left: 3px;
   font-weight: bold;
 }
 
+/* Submit Button Wrapper */
+.submitButtonWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: var(--spacing-xl);
+  padding: 0;
+}
+
 /* Submit Button */
 .submitButton {
-  background: #e74c3c;
-  color: white;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-secondary);
   border: none;
-  padding: 1rem 2rem;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 8px;
+  padding: var(--spacing-md) var(--spacing-2xl);
+  font-size: var(--text-base);
+  font-weight: var(--font-bold);
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  width: 100%;
-  margin-top: 0.5rem;
+  transition: all var(--transition-base);
+  min-width: 220px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(231, 76, 60, 0.1);
+  box-shadow: var(--shadow-gold);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  font-family: var(--font-mono);
 }
 
 .submitButton:hover {
-  background: #c0392b;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(231, 76, 60, 0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(212, 175, 55, 0.4);
 }
 
 .submitButton:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(231, 76, 60, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
 }
 
 .submitButton:disabled {
-  background: #bdc3c7;
+  background: var(--color-gray-300);
+  color: var(--color-gray-500);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
-  opacity: 0.8;
+  opacity: 0.6;
+  background-image: none;
+}
+
+.submitButton:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .submitButtonWrapper {
+    margin-top: var(--spacing-lg);
+  }
+  
+  .submitButton {
+    width: 100%;
+    min-width: auto;
+  }
 }
 
 /* Alert Messages */
@@ -127,31 +154,31 @@
 }
 
 .success {
-  background-color: #d4edda;
-  color: #155724;
-  border-color: #c3e6cb;
+  background-color: rgba(39, 174, 96, 0.1);
+  color: var(--color-success);
+  border-color: var(--color-success);
 }
 
 .success::before {
   content: '\f058';
-  color: #28a745;
+  color: var(--color-success);
 }
 
 .error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border-color: #f5c6cb;
+  background-color: rgba(231, 76, 60, 0.1);
+  color: var(--color-error);
+  border-color: var(--color-error);
 }
 
 .error::before {
   content: '\f06a';
-  color: #dc3545;
+  color: var(--color-error);
 }
 
 /* Placeholder Styling */
 ::placeholder {
-  color: #95a5a6;
-  opacity: 1;
+  color: var(--color-gray-500);
+  opacity: 0.8;
   font-weight: 400;
 }
 
@@ -173,109 +200,5 @@
     padding: 0.8rem 1.1rem;
     font-size: 0.95rem;
   }
-  
-  .submitButton {
-    padding: 0.9rem 1.5rem;
-    font-size: 0.95rem;
-  }
 }
 
-.contactForm {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.formGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.formGroup label {
-  font-weight: 500;
-  color: #444;
-  margin-bottom: 0.25rem;
-}
-
-.formGroup input,
-.formGroup textarea {
-  padding: 0.75rem 1rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.formGroup textarea {
-  min-height: 150px;
-  resize: vertical;
-}
-
-.formGroup input:focus,
-.formGroup textarea:focus {
-  outline: none;
-  border-color: #4a90e2;
-  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
-}
-
-.submitButton {
-  background-color: #4a90e2;
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  align-self: flex-start;
-  margin-top: 1rem;
-}
-
-.submitButton:hover {
-  background-color: #3a7bc8;
-}
-
-.submitButton:disabled {
-  background-color: #a0c4ff;
-  cursor: not-allowed;
-}
-
-.alert {
-  padding: 1rem;
-  border-radius: 4px;
-  margin-bottom: 1.5rem;
-  font-weight: 500;
-}
-
-.success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-.highlight {
-  background-color: #fff3cd;
-  padding: 0.2rem 0.4rem;
-  border-radius: 3px;
-}
-
-/* Responsive styles */
-@media (max-width: 768px) {
-  .contactFormContainer {
-    padding: 1.5rem;
-  }
-  
-  .submitButton {
-    width: 100%;
-  }
-}

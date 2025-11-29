@@ -3,20 +3,28 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: var(--color-bg-secondary);
 }
 
 /* Hero Section */
 .heroSection {
-  background: linear-gradient(135deg, rgba(34, 34, 34, 0.9), rgba(0, 0, 0, 0.7)),
+  background: linear-gradient(135deg, rgba(255, 236, 179, 0.9), rgba(255, 224, 130, 0.8)),
               url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
   background-size: cover;
   background-position: center;
-  color: white;
+  color: var(--color-secondary);
   padding: 6rem 1rem;
   text-align: center;
   margin-bottom: 4rem;
   position: relative;
+}
+
+@media (prefers-color-scheme: dark) {
+  .heroSection {
+    background: linear-gradient(135deg, rgba(15, 23, 32, 0.95), rgba(17, 24, 39, 0.9)),
+                url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+    color: var(--color-secondary);
+  }
 }
 
 .heroContent {
@@ -30,16 +38,29 @@
   font-size: 3rem;
   margin-bottom: 1rem;
   font-weight: 700;
-  color: #fff;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: var(--color-secondary);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .heroContent p {
   font-size: 1.25rem;
-  color: #eee;
+  color: var(--color-gray-700);
   margin-bottom: 0;
   max-width: 700px;
   margin: 0 auto;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .heroContent h1 {
+    color: var(--color-secondary);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  .heroContent p {
+    color: var(--color-gray-600);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
 }
 
 /* Contact Section */
@@ -59,42 +80,34 @@
   display: grid;
   grid-template-columns: 1fr 1.5fr;
   gap: 3rem;
-  background: white;
+  background: var(--color-bg-primary);
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
   position: relative;
   z-index: 2;
   margin-top: -50px;
+  border: 1px solid var(--border);
 }
 
 /* Contact Info */
 .contactInfo {
-  background: #2c3e50;
+  background: var(--color-bg-tertiary);
   padding: 3rem 2.5rem;
-  color: white;
+  color: var(--color-secondary);
   position: relative;
   overflow: hidden;
+  border-right: 1px solid var(--border);
 }
 
-.contactInfo::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, #2c3e50, #3498db);
-  opacity: 0.95;
-  z-index: -1;
-}
+/* Remove gradient overlay - not needed with CSS variables */
 
 .sectionTitle {
   font-size: 2rem;
   margin-bottom: 1.5rem;
   position: relative;
   padding-bottom: 1rem;
-  color: #fff;
+  color: var(--color-secondary);
 }
 
 .sectionTitle::after {
@@ -104,11 +117,11 @@
   bottom: 0;
   width: 60px;
   height: 3px;
-  background: #e74c3c;
+  background: var(--color-primary);
 }
 
 .sectionSubtitle {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--color-gray-600);
   margin-bottom: 2.5rem;
   line-height: 1.6;
 }
@@ -120,30 +133,29 @@
 }
 
 .infoIcon {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  width: 44px;
-  height: 44px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
+  background: rgba(212, 175, 55, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-right: 1rem;
   flex-shrink: 0;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
+  font-size: 1.2rem;
+  color: var(--color-primary);
 }
 
 .infoContent h3 {
   font-size: 1.1rem;
   margin-bottom: 0.25rem;
-  color: #fff;
+  color: var(--color-secondary);
   font-weight: 600;
 }
 
 .infoContent p {
   margin: 0;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--color-gray-600);
   font-size: 0.95rem;
   line-height: 1.5;
 }
@@ -156,7 +168,7 @@
 .socialLinks h3 {
   font-size: 1.2rem;
   margin-bottom: 1.25rem;
-  color: #fff;
+  color: var(--color-secondary);
   position: relative;
   display: inline-block;
 }
@@ -172,8 +184,8 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--color-primary);
   border-radius: 50%;
   font-size: 1.1rem;
   transition: all 0.3s ease;
@@ -181,19 +193,23 @@
 }
 
 .socialIcon:hover {
-  background: #e74c3c;
+  background: var(--color-primary);
+  color: var(--color-secondary);
   transform: translateY(-3px);
 }
 
 /* Contact Form Wrapper */
 .contactFormWrapper {
   padding: 3rem 2.5rem;
-  background: #fff;
+  background: var(--color-bg-primary);
+  border-radius: 8px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
 }
 
 .formTitle {
   font-size: 1.8rem;
-  color: #2c3e50;
+  color: var(--color-secondary);
   margin-bottom: 1.5rem;
   position: relative;
   padding-bottom: 1rem;
@@ -206,7 +222,7 @@
   bottom: 0;
   width: 50px;
   height: 3px;
-  background: #e74c3c;
+  background: var(--color-primary);
 }
 
 /* Responsive Design */
@@ -278,85 +294,3 @@
   }
 }
 
-.contactInfo h2 {
-  color: #333;
-  margin-bottom: 1.5rem;
-  font-size: 1.8rem;
-  position: relative;
-  padding-bottom: 0.5rem;
-}
-
-.contactInfo h2::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 50px;
-  height: 3px;
-  background-color: #4a90e2;
-}
-
-.infoItem {
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 1.5rem;
-}
-
-.infoItem i {
-  font-size: 1.2rem;
-  color: #4a90e2;
-  margin-right: 1rem;
-  margin-top: 0.3rem;
-}
-
-.infoItem h3 {
-  color: #444;
-  margin-bottom: 0.3rem;
-  font-size: 1.1rem;
-}
-
-.infoItem p {
-  color: #666;
-  margin: 0;
-  line-height: 1.5;
-}
-
-.contactFormWrapper {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
-}
-
-/* Responsive styles */
-@media (max-width: 992px) {
-  .contactContent {
-    grid-template-columns: 1fr;
-  }
-  
-  .contactInfo {
-    margin-bottom: 2rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .contactPage {
-    padding: 2rem 0;
-  }
-  
-  .contactPage h1 {
-    font-size: 2rem;
-  }
-  
-  .contactContent {
-    padding: 1.5rem;
-  }
-  
-  .infoItem {
-    flex-direction: column;
-  }
-  
-  .infoItem i {
-    margin-bottom: 0.5rem;
-  }
-}

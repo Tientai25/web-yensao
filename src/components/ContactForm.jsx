@@ -144,13 +144,15 @@ const ContactForm = () => {
           />
         </div>
         
-        <button 
-          type="submit" 
-          className={styles.submitButton}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? 'Đang gửi...' : 'Gửi tin nhắn'}
-        </button>
+        <div className={styles.submitButtonWrapper}>
+          <button 
+            type="submit" 
+            className={styles.submitButton}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Đang gửi...' : 'Gửi tin nhắn'}
+          </button>
+        </div>
       </form>
     </div>
   );
