@@ -3,8 +3,6 @@ import Hero from '../components/Hero'
 import Products from '../components/Products'
 import Features from '../components/Features'
 import Testimonials from '../components/Testimonials'
-import FAQ from '../components/FAQ'
-import Contact from '../components/Contact'
 import Footer from '../components/Footer'
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
@@ -30,8 +28,6 @@ const Home = () => {
       <Products />
       <Features />
       <Testimonials />
-      <FAQ />
-      <Contact />
       <Footer />
     </>
   )

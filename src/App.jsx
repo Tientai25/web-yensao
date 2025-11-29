@@ -12,6 +12,7 @@ import './App.css'
 import ThankYou from './pages/ThankYou'
 import BankRedirect from './pages/BankRedirect'
 import ScrollToTop from './components/ScrollToTop'
+import ContactPage from './pages/ContactPage'
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/bank-redirect" element={<BankRedirect />} />
         <Route path="/thank-you" element={<ThankYou />} />
+        <Route path="/lien-he" element={<ContactPage />} />
       </Routes>
     </div>
   )

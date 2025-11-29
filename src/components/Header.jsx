@@ -45,13 +45,7 @@ const Header = () => {
               Đánh Giá
             </button>
             <Link to="/faq" className={styles.navLink}>FAQ</Link>
-            <button 
-              onClick={() => handleScroll('contact')}
-              className={styles.ctaButton}
-            >
-              Liên Hệ
-            </button>
-
+            <Link to="/lien-he" className={`${styles.navLink} ${styles.ctaButton}`}>Liên hệ</Link>
             <Link to="/cart" className={styles.cartLink} aria-label="Xem giỏ hàng">
               🛒
               {cartCount > 0 && <span className={styles.cartBadge}>{cartCount}</span>}
