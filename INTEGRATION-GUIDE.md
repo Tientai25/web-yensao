@@ -2,23 +2,24 @@
 
 ## Bước 1: Setup Backend
 
-1. **Cài đặt PostgreSQL:**
+1. **Cài đặt MySQL:**
 ```bash
 # Windows (với Chocolatey)
-choco install postgresql
+choco install mysql
 
-# Hoặc download từ https://www.postgresql.org/download/
+# Hoặc download từ https://dev.mysql.com/downloads/installer/
+# Hoặc dùng XAMPP/WAMP (đã bao gồm MySQL)
 ```
 
 2. **Tạo database:**
 ```sql
-CREATE DATABASE yen_sao_db;
+CREATE DATABASE yen_sao_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
 3. **Chạy schema:**
 ```bash
 cd backend
-psql -U postgres -d yen_sao_db -f database/schema.sql
+mysql -u root -p yen_sao_db < database/schema.sql
 ```
 
 4. **Cài đặt dependencies và chạy backend:**
@@ -268,9 +269,9 @@ curl http://localhost:5000/api/products/1
 - Kiểm tra CORS middleware trong `server.js`
 
 ### Database Connection Error
-- Kiểm tra PostgreSQL đang chạy
+- Kiểm tra MySQL đang chạy
 - Verify credentials trong `.env`
-- Test connection: `psql -U postgres -d yen_sao_db`
+- Test connection: `mysql -u root -p yen_sao_db`
 
 ### API Not Found
 - Kiểm tra backend đang chạy

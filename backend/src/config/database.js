@@ -1,26 +1,31 @@
-import pg from 'pg';
+import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const { Pool } = pg;
-
-const pool = new Pool({
-  user: process.env.DB_USER || 'postgres',
+// Create connection pool
+const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'yen_sao_db',
-  password: process.env.DB_PASSWORD || 'password',
-  port: process.env.DB_PORT || 5432,
+  port: process.env.DB_PORT || 3306,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0
 });
 
 // Test connection
-pool.on('connect', () => {
-  console.log('✅ Connected to PostgreSQL database');
-});
-
-pool.on('error', (err) => {
-  console.error('❌ Database connection error:', err);
-});
+pool.getConnection()
+  .then((connection) => {
+    console.log('✅ Connected to MySQL database');
+    connection.release();
+  })
+  .catch((err) => {
+    console.error('❌ Database connection error:', err.message);
+  });
 
 export default pool;
 

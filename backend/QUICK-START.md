@@ -1,6 +1,41 @@
-# Quick Start - Chạy Backend Nhanh
+# Quick Start - Chạy Backend Nhanh (MySQL)
+
+## 🎯 Nếu Bạn Có MySQL Workbench
+
+Xem hướng dẫn chi tiết: **[MYSQL-WORKBENCH-GUIDE.md](./MYSQL-WORKBENCH-GUIDE.md)**
+
+**Tóm tắt nhanh:**
+1. Mở MySQL Workbench → Kết nối với MySQL server
+2. Tạo database: `CREATE DATABASE yen_sao_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
+3. Chọn database: `USE yen_sao_db;`
+4. Mở file `database/schema.sql` → Copy toàn bộ → Paste vào SQL Editor → Execute
+5. Cấu hình `.env` với thông tin MySQL của bạn
+6. Chạy `npm run dev`
 
 ## TL;DR (Tóm Tắt Nhanh)
+
+### Option 1: Sử dụng Setup Script (Khuyến nghị)
+
+**Windows:**
+```bash
+cd backend
+scripts\setup.bat
+```
+
+**MacOS/Linux:**
+```bash
+cd backend
+chmod +x scripts/setup.sh
+./scripts/setup.sh
+```
+
+**Hoặc dùng npm:**
+```bash
+cd backend
+npm run setup
+```
+
+### Option 2: Manual Setup
 
 ```bash
 # 1. Cài dependencies
@@ -9,15 +44,15 @@ npm install
 
 # 2. Setup .env
 cp .env.example .env
-# Chỉnh sửa .env với thông tin database của bạn
+# Chỉnh sửa .env với thông tin database
 
 # 3. Tạo database
-createdb yen_sao_db
-# hoặc
-psql -U postgres -c "CREATE DATABASE yen_sao_db;"
+mysql -u root -p
+CREATE DATABASE yen_sao_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+EXIT;
 
 # 4. Chạy schema
-psql -U postgres -d yen_sao_db -f database/schema.sql
+mysql -u root -p yen_sao_db < database/schema.sql
 
 # 5. Chạy server
 npm run dev
@@ -42,28 +77,27 @@ cp .env.example .env
 **Chỉnh sửa .env:**
 ```env
 DB_HOST=localhost
-DB_PORT=5432
+DB_PORT=3306
 DB_NAME=yen_sao_db
-DB_USER=postgres
+DB_USER=root
 DB_PASSWORD=your_password_here
 ```
 
 ### 3. Tạo Database
 
 ```bash
-# Windows (nếu PostgreSQL đã được thêm vào PATH)
-createdb -U postgres yen_sao_db
+# Kết nối MySQL
+mysql -u root -p
 
-# Hoặc dùng psql
-psql -U postgres
-CREATE DATABASE yen_sao_db;
-\q
+# Trong MySQL shell
+CREATE DATABASE yen_sao_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+EXIT;
 ```
 
 ### 4. Chạy Schema
 
 ```bash
-psql -U postgres -d yen_sao_db -f database/schema.sql
+mysql -u root -p yen_sao_db < database/schema.sql
 ```
 
 ### 5. Chạy Server
@@ -85,19 +119,21 @@ curl http://localhost:5000/api/health
 
 ## Nếu Gặp Lỗi
 
-**Lỗi: PostgreSQL không chạy**
-- Windows: Services → Start PostgreSQL
-- Mac: `brew services start postgresql@14`
-- Linux: `sudo systemctl start postgresql`
+**Lỗi: MySQL không chạy**
+- Windows: Services → Start MySQL
+- Mac: `brew services start mysql`
+- Linux: `sudo systemctl start mysql`
 
 **Lỗi: Database không tồn tại**
 ```sql
-CREATE DATABASE yen_sao_db;
+CREATE DATABASE yen_sao_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-**Lỗi: Permission denied**
+**Lỗi: Access denied**
 - Kiểm tra password trong .env
-- Đảm bảo user có quyền tạo database
+- Đảm bảo user có quyền truy cập database
+
+**Lỗi: Table doesn't exist**
+- Chạy lại: `mysql -u root -p yen_sao_db < database/schema.sql`
 
 Xem chi tiết tại: `SETUP-INSTRUCTIONS.md`
-

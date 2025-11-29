@@ -70,22 +70,22 @@ if (!fs.existsSync(uploadsDir)) {
   console.log('✅ Thư mục uploads/products đã tồn tại');
 }
 
-// Kiểm tra PostgreSQL
-console.log('\n🐘 Kiểm tra PostgreSQL...');
+// Kiểm tra MySQL
+console.log('\n🐬 Kiểm tra MySQL...');
 try {
-  execSync('psql --version', { stdio: 'pipe' });
-  console.log('✅ PostgreSQL đã được cài đặt');
-  console.log('⚠️  Đảm bảo PostgreSQL đang chạy và database đã được tạo!');
+  execSync('mysql --version', { stdio: 'pipe' });
+  console.log('✅ MySQL đã được cài đặt');
+  console.log('⚠️  Đảm bảo MySQL đang chạy và database đã được tạo!');
 } catch (error) {
-  console.log('⚠️  Không tìm thấy PostgreSQL trong PATH');
-  console.log('   Vui lòng cài đặt PostgreSQL hoặc thêm vào PATH');
+  console.log('⚠️  Không tìm thấy MySQL trong PATH');
+  console.log('   Vui lòng cài đặt MySQL hoặc thêm vào PATH');
 }
 
 console.log('\n✨ Setup hoàn tất!');
 console.log('\n📋 Các bước tiếp theo:');
 console.log('1. Chỉnh sửa file .env với thông tin database');
-console.log('2. Tạo database: createdb yen_sao_db');
-console.log('3. Chạy schema: psql -U postgres -d yen_sao_db -f database/schema.sql');
+console.log('2. Tạo database: mysql -u root -p (sau đó CREATE DATABASE yen_sao_db)');
+console.log('3. Chạy schema: mysql -u root -p yen_sao_db < database/schema.sql');
 console.log('4. Chạy server: npm run dev');
 console.log('\n📚 Xem thêm: SETUP-INSTRUCTIONS.md\n');
 

@@ -14,11 +14,14 @@ export const createOrder = async (req, res, next) => {
       coupon
     } = req.body;
 
-    const result = await pool.query(
-      `INSERT INTO orders (name, email, phone, address, items, totals, payment_method, coupon, status, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
-       RETURNING *`,
+    // Generate order number
+    const orderNumber = 'ORD-' + Date.now();
+    
+    const [result] = await pool.execute(
+      `INSERT INTO orders (order_number, name, email, phone, address, items, totals, payment_method, coupon, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
+        orderNumber,
         name,
         email,
         phone,
@@ -31,9 +34,12 @@ export const createOrder = async (req, res, next) => {
       ]
     );
 
+    // Lấy đơn hàng vừa tạo
+    const [newOrder] = await pool.execute('SELECT * FROM orders WHERE id = ?', [result.insertId]);
+
     res.status(201).json({
       success: true,
-      data: result.rows[0],
+      data: newOrder[0],
       message: 'Order created successfully'
     });
   } catch (error) {
@@ -45,9 +51,9 @@ export const createOrder = async (req, res, next) => {
 export const getOrderById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const result = await pool.query('SELECT * FROM orders WHERE id = $1', [id]);
+    const [rows] = await pool.execute('SELECT * FROM orders WHERE id = ?', [id]);
 
-    if (result.rows.length === 0) {
+    if (rows.length === 0) {
       return res.status(404).json({
         success: false,
         message: 'Order not found'
@@ -56,7 +62,7 @@ export const getOrderById = async (req, res, next) => {
 
     res.json({
       success: true,
-      data: result.rows[0]
+      data: rows[0]
     });
   } catch (error) {
     next(error);
@@ -69,31 +75,28 @@ export const getOrders = async (req, res, next) => {
     const { email, status, page = 1, limit = 20 } = req.query;
     let query = 'SELECT * FROM orders WHERE 1=1';
     const params = [];
-    let paramCount = 1;
 
     if (email) {
-      query += ` AND email = $${paramCount}`;
+      query += ' AND email = ?';
       params.push(email);
-      paramCount++;
     }
 
     if (status) {
-      query += ` AND status = $${paramCount}`;
+      query += ' AND status = ?';
       params.push(status);
-      paramCount++;
     }
 
-    query += ` ORDER BY created_at DESC LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
-    params.push(limit, (page - 1) * limit);
+    query += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
+    params.push(parseInt(limit), (parseInt(page) - 1) * parseInt(limit));
 
-    const result = await pool.query(query, params);
+    const [rows] = await pool.execute(query, params);
     res.json({
       success: true,
-      data: result.rows,
+      data: rows,
       pagination: {
         page: parseInt(page),
         limit: parseInt(limit),
-        total: result.rowCount
+        total: rows.length
       }
     });
   } catch (error) {
@@ -115,21 +118,24 @@ export const updateOrderStatus = async (req, res, next) => {
       });
     }
 
-    const result = await pool.query(
-      'UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING *',
+    const [result] = await pool.execute(
+      'UPDATE orders SET status = ?, updated_at = NOW() WHERE id = ?',
       [status, id]
     );
 
-    if (result.rows.length === 0) {
+    if (result.affectedRows === 0) {
       return res.status(404).json({
         success: false,
         message: 'Order not found'
       });
     }
 
+    // Lấy đơn hàng đã cập nhật
+    const [updatedOrder] = await pool.execute('SELECT * FROM orders WHERE id = ?', [id]);
+
     res.json({
       success: true,
-      data: result.rows[0],
+      data: updatedOrder[0],
       message: 'Order status updated'
     });
   } catch (error) {

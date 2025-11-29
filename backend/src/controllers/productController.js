@@ -12,31 +12,29 @@ export const getProducts = async (req, res, next) => {
     const { category, search, page = 1, limit = 20 } = req.query;
     let query = 'SELECT * FROM products WHERE 1=1';
     const params = [];
-    let paramCount = 1;
 
     if (category) {
-      query += ` AND category = $${paramCount}`;
+      query += ' AND category = ?';
       params.push(category);
-      paramCount++;
     }
 
     if (search) {
-      query += ` AND (name ILIKE $${paramCount} OR description ILIKE $${paramCount})`;
-      params.push(`%${search}%`);
-      paramCount++;
+      query += ' AND (LOWER(name) LIKE ? OR LOWER(description) LIKE ?)';
+      const searchTerm = `%${search.toLowerCase()}%`;
+      params.push(searchTerm, searchTerm);
     }
 
-    query += ` ORDER BY id DESC LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
-    params.push(limit, (page - 1) * limit);
+    query += ' ORDER BY id DESC LIMIT ? OFFSET ?';
+    params.push(parseInt(limit), (parseInt(page) - 1) * parseInt(limit));
 
-    const result = await pool.query(query, params);
+    const [rows] = await pool.execute(query, params);
     res.json({
       success: true,
-      data: result.rows,
+      data: rows,
       pagination: {
         page: parseInt(page),
         limit: parseInt(limit),
-        total: result.rowCount
+        total: rows.length
       }
     });
   } catch (error) {
@@ -48,9 +46,9 @@ export const getProducts = async (req, res, next) => {
 export const getProductById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const result = await pool.query('SELECT * FROM products WHERE id = $1', [id]);
+    const [rows] = await pool.execute('SELECT * FROM products WHERE id = ?', [id]);
 
-    if (result.rows.length === 0) {
+    if (rows.length === 0) {
       return res.status(404).json({
         success: false,
         message: 'Product not found'
@@ -59,7 +57,7 @@ export const getProductById = async (req, res, next) => {
 
     res.json({
       success: true,
-      data: result.rows[0]
+      data: rows[0]
     });
   } catch (error) {
     next(error);
@@ -89,10 +87,9 @@ export const createProduct = async (req, res, next) => {
       imageUrl = `/uploads/products/${req.file.filename}`;
     }
 
-    const result = await pool.query(
+    const [result] = await pool.execute(
       `INSERT INTO products (name, category, price, original_price, image, rating, reviews, description, benefits, in_stock, article)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-       RETURNING *`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         name,
         category,
@@ -108,9 +105,12 @@ export const createProduct = async (req, res, next) => {
       ]
     );
 
+    // Lấy sản phẩm vừa tạo
+    const [newProduct] = await pool.execute('SELECT * FROM products WHERE id = ?', [result.insertId]);
+
     res.status(201).json({
       success: true,
-      data: result.rows[0]
+      data: newProduct[0]
     });
   } catch (error) {
     next(error);
@@ -141,9 +141,9 @@ export const updateProduct = async (req, res, next) => {
       imageUrl = `/uploads/products/${req.file.filename}`;
       
       // Xóa ảnh cũ nếu có
-      const oldProduct = await pool.query('SELECT image FROM products WHERE id = $1', [id]);
-      if (oldProduct.rows[0]?.image && oldProduct.rows[0].image.startsWith('/uploads/')) {
-        const oldImagePath = path.join(__dirname, '../../', oldProduct.rows[0].image);
+      const [oldProductRows] = await pool.execute('SELECT image FROM products WHERE id = ?', [id]);
+      if (oldProductRows[0]?.image && oldProductRows[0].image.startsWith('/uploads/')) {
+        const oldImagePath = path.join(__dirname, '../../', oldProductRows[0].image);
         try {
           if (fs.existsSync(oldImagePath)) {
             fs.unlinkSync(oldImagePath);
@@ -154,13 +154,12 @@ export const updateProduct = async (req, res, next) => {
       }
     }
 
-    const result = await pool.query(
+    const [result] = await pool.execute(
       `UPDATE products 
-       SET name = $1, category = $2, price = $3, original_price = $4, image = $5, 
-           rating = $6, reviews = $7, description = $8, benefits = $9, 
-           in_stock = $10, article = $11, updated_at = NOW()
-       WHERE id = $12
-       RETURNING *`,
+       SET name = ?, category = ?, price = ?, original_price = ?, image = ?, 
+           rating = ?, reviews = ?, description = ?, benefits = ?, 
+           in_stock = ?, article = ?, updated_at = NOW()
+       WHERE id = ?`,
       [
         name,
         category,
@@ -177,16 +176,19 @@ export const updateProduct = async (req, res, next) => {
       ]
     );
 
-    if (result.rows.length === 0) {
+    if (result.affectedRows === 0) {
       return res.status(404).json({
         success: false,
         message: 'Product not found'
       });
     }
 
+    // Lấy sản phẩm đã cập nhật
+    const [updatedProduct] = await pool.execute('SELECT * FROM products WHERE id = ?', [id]);
+
     res.json({
       success: true,
-      data: result.rows[0]
+      data: updatedProduct[0]
     });
   } catch (error) {
     next(error);
@@ -197,9 +199,9 @@ export const updateProduct = async (req, res, next) => {
 export const deleteProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const result = await pool.query('DELETE FROM products WHERE id = $1 RETURNING id', [id]);
+    const [result] = await pool.execute('DELETE FROM products WHERE id = ?', [id]);
 
-    if (result.rows.length === 0) {
+    if (result.affectedRows === 0) {
       return res.status(404).json({
         success: false,
         message: 'Product not found'

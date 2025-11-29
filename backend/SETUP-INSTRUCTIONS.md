@@ -1,9 +1,9 @@
-# Hướng Dẫn Setup và Chạy Backend
+# Hướng Dẫn Setup và Chạy Backend (MySQL)
 
 ## Yêu Cầu Hệ Thống
 
 - **Node.js**: Version 18 trở lên
-- **PostgreSQL**: Version 14 trở lên
+- **MySQL**: Version 8.0 trở lên (hoặc MariaDB 10.3+)
 - **npm** hoặc **yarn**
 
 ## Bước 1: Kiểm Tra Node.js
@@ -20,39 +20,49 @@ npm --version
 
 Nếu chưa có Node.js, download tại: https://nodejs.org/
 
-## Bước 2: Cài Đặt PostgreSQL
+## Bước 2: Cài Đặt MySQL
 
 ### Windows:
 
 **Option 1: Sử dụng Chocolatey**
 ```powershell
-choco install postgresql
+choco install mysql
 ```
 
 **Option 2: Download từ website**
-1. Truy cập: https://www.postgresql.org/download/windows/
-2. Download và cài đặt PostgreSQL
-3. Ghi nhớ password cho user `postgres`
+1. Truy cập: https://dev.mysql.com/downloads/installer/
+2. Download MySQL Installer (Windows)
+3. Chọn "Developer Default" hoặc "Server only"
+4. Ghi nhớ root password
 
-**Option 3: Sử dụng Docker**
+**Option 3: Sử dụng XAMPP/WAMP**
+- XAMPP: https://www.apachefriends.org/
+- WAMP: https://www.wampserver.com/
+- Đã bao gồm MySQL
+
+**Option 4: Sử dụng Docker**
 ```bash
-docker run --name postgres-yen-sao -e POSTGRES_PASSWORD=your_password -e POSTGRES_DB=yen_sao_db -p 5432:5432 -d postgres:14
+docker run --name mysql-yen-sao -e MYSQL_ROOT_PASSWORD=your_password -e MYSQL_DATABASE=yen_sao_db -p 3306:3306 -d mysql:8.0
 ```
 
 ### MacOS:
 
 ```bash
 # Sử dụng Homebrew
-brew install postgresql@14
-brew services start postgresql@14
+brew install mysql
+brew services start mysql
+
+# Hoặc dùng MySQL Workbench
+brew install --cask mysql-workbench
 ```
 
 ### Linux (Ubuntu/Debian):
 
 ```bash
 sudo apt update
-sudo apt install postgresql postgresql-contrib
-sudo systemctl start postgresql
+sudo apt install mysql-server
+sudo systemctl start mysql
+sudo systemctl enable mysql
 ```
 
 ## Bước 3: Tạo Database
@@ -60,31 +70,32 @@ sudo systemctl start postgresql
 ### Windows (Command Prompt hoặc PowerShell):
 
 ```bash
-# Kết nối PostgreSQL
-psql -U postgres
+# Kết nối MySQL
+mysql -u root -p
 
-# Hoặc nếu có password
-psql -U postgres -h localhost
+# Hoặc nếu MySQL trong PATH
+mysql -u root -p -h localhost
 ```
 
 ### MacOS/Linux:
 
 ```bash
-sudo -u postgres psql
+sudo mysql -u root -p
 ```
 
-### Trong PostgreSQL Shell:
+### Trong MySQL Shell:
 
 ```sql
 -- Tạo database
-CREATE DATABASE yen_sao_db;
+CREATE DATABASE yen_sao_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- Tạo user (optional)
-CREATE USER yen_sao_user WITH PASSWORD 'your_password';
-GRANT ALL PRIVILEGES ON DATABASE yen_sao_db TO yen_sao_user;
+CREATE USER 'yen_sao_user'@'localhost' IDENTIFIED BY 'your_password';
+GRANT ALL PRIVILEGES ON yen_sao_db.* TO 'yen_sao_user'@'localhost';
+FLUSH PRIVILEGES;
 
 -- Thoát
-\q
+EXIT;
 ```
 
 ## Bước 4: Setup Backend Project
@@ -105,7 +116,7 @@ Lệnh này sẽ cài đặt tất cả packages cần thiết:
 - express
 - cors
 - dotenv
-- pg (PostgreSQL client)
+- mysql2 (MySQL client)
 - multer (file upload)
 - và các packages khác
 
@@ -131,10 +142,10 @@ FRONTEND_URL=http://localhost:5173
 
 # Database - CẬP NHẬT THÔNG TIN CỦA BẠN
 DB_HOST=localhost
-DB_PORT=5432
+DB_PORT=3306
 DB_NAME=yen_sao_db
-DB_USER=postgres
-DB_PASSWORD=your_postgres_password
+DB_USER=root
+DB_PASSWORD=your_mysql_password
 
 # Email (Optional - có thể để trống nếu chưa cần)
 SMTP_HOST=smtp.gmail.com
@@ -149,32 +160,35 @@ JWT_EXPIRE=7d
 ```
 
 **Lưu ý quan trọng:**
-- Thay `your_postgres_password` bằng password PostgreSQL của bạn
-- Nếu dùng user khác, thay `postgres` bằng username của bạn
+- Thay `your_mysql_password` bằng root password MySQL của bạn
+- Nếu dùng user khác, thay `root` bằng username của bạn
+- Port mặc định của MySQL là `3306`
 
 ## Bước 5: Tạo Database Schema
 
-### Cách 1: Sử dụng psql command line
+### Cách 1: Sử dụng mysql command line
 
 ```bash
 # Windows
-psql -U postgres -d yen_sao_db -f database/schema.sql
+mysql -u root -p yen_sao_db < database/schema.sql
 
 # MacOS/Linux
-sudo -u postgres psql -d yen_sao_db -f database/schema.sql
+mysql -u root -p yen_sao_db < database/schema.sql
 ```
 
-### Cách 2: Sử dụng pgAdmin hoặc DBeaver
+### Cách 2: Sử dụng MySQL Workbench hoặc phpMyAdmin
 
-1. Mở pgAdmin hoặc DBeaver
-2. Kết nối với database `yen_sao_db`
-3. Mở file `backend/database/schema.sql`
-4. Chạy toàn bộ script SQL
+1. Mở MySQL Workbench hoặc phpMyAdmin
+2. Kết nối với MySQL server
+3. Chọn database `yen_sao_db`
+4. Mở file `backend/database/schema.sql`
+5. Copy và paste toàn bộ nội dung vào SQL editor
+6. Chạy script (Execute)
 
-### Cách 3: Copy và paste vào psql
+### Cách 3: Copy và paste vào mysql shell
 
 ```bash
-psql -U postgres -d yen_sao_db
+mysql -u root -p yen_sao_db
 ```
 
 Sau đó copy nội dung file `database/schema.sql` và paste vào terminal.
@@ -210,7 +224,7 @@ Nếu thành công, bạn sẽ thấy:
 ```
 🚀 Server is running on http://localhost:5000
 📦 Environment: development
-✅ Connected to PostgreSQL database
+✅ Connected to MySQL database
 ```
 
 ## Bước 8: Kiểm Tra Backend
@@ -255,50 +269,60 @@ rm -rf node_modules package-lock.json
 npm install
 ```
 
-### Lỗi: "Connection refused" (PostgreSQL)
+### Lỗi: "Connection refused" (MySQL)
 
-1. Kiểm tra PostgreSQL đang chạy:
+1. Kiểm tra MySQL đang chạy:
    ```bash
    # Windows
-   Get-Service postgresql*
-
-   # MacOS/Linux
-   sudo systemctl status postgresql
-   ```
-
-2. Khởi động PostgreSQL nếu chưa chạy:
-   ```bash
-   # Windows
-   net start postgresql-x64-14
+   Get-Service MySQL*
 
    # MacOS
-   brew services start postgresql@14
+   brew services list | grep mysql
 
    # Linux
-   sudo systemctl start postgresql
+   sudo systemctl status mysql
    ```
 
-### Lỗi: "password authentication failed"
+2. Khởi động MySQL nếu chưa chạy:
+   ```bash
+   # Windows
+   net start MySQL80
+   # hoặc
+   net start MySQL
 
-- Kiểm tra lại password trong file `.env`
+   # MacOS
+   brew services start mysql
+
+   # Linux
+   sudo systemctl start mysql
+   ```
+
+### Lỗi: "Access denied for user"
+
+- Kiểm tra lại username và password trong file `.env`
 - Đảm bảo user có quyền truy cập database
+- Thử reset password MySQL:
+  ```sql
+  ALTER USER 'root'@'localhost' IDENTIFIED BY 'new_password';
+  FLUSH PRIVILEGES;
+  ```
 
-### Lỗi: "database does not exist"
+### Lỗi: "Unknown database"
 
 ```sql
 -- Tạo lại database
-CREATE DATABASE yen_sao_db;
+CREATE DATABASE yen_sao_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-### Lỗi: "relation does not exist"
+### Lỗi: "Table doesn't exist"
 
 - Chạy lại file `database/schema.sql` để tạo tables
 
-### Lỗi: Port 5000 đã được sử dụng
+### Lỗi: Port 3306 đã được sử dụng
 
 Thay đổi PORT trong file `.env`:
 ```env
-PORT=5001
+DB_PORT=3307
 ```
 
 ## Cấu Trúc Thư Mục Sau Khi Setup
@@ -342,13 +366,22 @@ npm run dev
 Ctrl + C
 
 # Kiểm tra database connection
-psql -U postgres -d yen_sao_db -c "SELECT version();"
+mysql -u root -p -e "SELECT VERSION();"
+
+# Xem danh sách databases
+mysql -u root -p -e "SHOW DATABASES;"
 
 # Xem danh sách tables
-psql -U postgres -d yen_sao_db -c "\dt"
+mysql -u root -p yen_sao_db -e "SHOW TABLES;"
 
 # Xem dữ liệu products
-psql -U postgres -d yen_sao_db -c "SELECT * FROM products;"
+mysql -u root -p yen_sao_db -e "SELECT * FROM products;"
+
+# Backup database
+mysqldump -u root -p yen_sao_db > backup.sql
+
+# Restore database
+mysql -u root -p yen_sao_db < backup.sql
 ```
 
 ## Hỗ Trợ
@@ -358,4 +391,3 @@ Nếu gặp vấn đề:
 2. Verify database connection
 3. Kiểm tra file `.env` có đúng không
 4. Xem `Troubleshooting` section ở trên
-

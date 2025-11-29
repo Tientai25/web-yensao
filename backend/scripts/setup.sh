@@ -50,14 +50,14 @@ echo "[4/5] Tạo thư mục uploads..."
 mkdir -p uploads/products
 echo "[OK] Đã tạo thư mục uploads/products"
 
-# Kiểm tra PostgreSQL
+# Kiểm tra MySQL
 echo ""
-echo "[5/5] Kiểm tra PostgreSQL..."
-if ! command -v psql &> /dev/null; then
-    echo "[WARNING] Không tìm thấy PostgreSQL trong PATH"
-    echo "Vui lòng cài đặt PostgreSQL hoặc thêm vào PATH"
+echo "[5/5] Kiểm tra MySQL..."
+if ! command -v mysql &> /dev/null; then
+    echo "[WARNING] Không tìm thấy MySQL trong PATH"
+    echo "Vui lòng cài đặt MySQL hoặc thêm vào PATH"
 else
-    echo "[OK] PostgreSQL version: $(psql --version)"
+    echo "[OK] MySQL version: $(mysql --version)"
 fi
 
 echo ""
@@ -68,7 +68,7 @@ echo ""
 echo "Các bước tiếp theo:"
 echo "1. Chỉnh sửa file .env với thông tin database"
 echo "2. Tạo database: createdb yen_sao_db"
-echo "3. Chạy schema: psql -U postgres -d yen_sao_db -f database/schema.sql"
+echo "3. Chạy schema: mysql -u root -p yen_sao_db < database/schema.sql"
 echo "4. Chạy server: npm run dev"
 echo ""
 

@@ -57,16 +57,16 @@ if not exist uploads\products (
     echo [OK] Thư mục uploads\products đã tồn tại
 )
 
-REM Kiểm tra PostgreSQL
+REM Kiểm tra MySQL
 echo.
-echo [5/5] Kiểm tra PostgreSQL...
-psql --version >nul 2>&1
+echo [5/5] Kiểm tra MySQL...
+mysql --version >nul 2>&1
 if errorlevel 1 (
-    echo [WARNING] Không tìm thấy PostgreSQL trong PATH
-    echo Vui lòng cài đặt PostgreSQL hoặc thêm vào PATH
+    echo [WARNING] Không tìm thấy MySQL trong PATH
+    echo Vui lòng cài đặt MySQL hoặc thêm vào PATH
 ) else (
-    echo [OK] PostgreSQL đã được cài đặt
-    psql --version
+    echo [OK] MySQL đã được cài đặt
+    mysql --version
 )
 
 echo.
@@ -76,8 +76,8 @@ echo ====================================
 echo.
 echo Các bước tiếp theo:
 echo 1. Chỉnh sửa file .env với thông tin database
-echo 2. Tạo database: createdb -U postgres yen_sao_db
-echo 3. Chạy schema: psql -U postgres -d yen_sao_db -f database\schema.sql
+echo 2. Tạo database: mysql -u root -p (sau đó CREATE DATABASE yen_sao_db)
+echo 3. Chạy schema: mysql -u root -p yen_sao_db ^< database\schema.sql
 echo 4. Chạy server: npm run dev
 echo.
 pause

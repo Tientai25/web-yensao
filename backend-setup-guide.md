@@ -28,9 +28,9 @@ Dự án hiện tại đang là frontend React với dữ liệu tĩnh. Để ch
 
 ## Database Options
 
-1. **PostgreSQL** - Khuyến nghị (mạnh mẽ, miễn phí)
-2. **MySQL** - Phổ biến, dễ setup
-3. **MongoDB** - NoSQL, linh hoạt
+1. **MySQL** - Đang sử dụng (phổ biến, dễ setup, tốt cho production)
+2. **PostgreSQL** - Mạnh mẽ, miễn phí (có thể chuyển đổi sau)
+3. **MongoDB** - NoSQL, linh hoạt (nếu cần)
 
 ## Các API Endpoints Cần Thiết
 

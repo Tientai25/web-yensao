@@ -6,12 +6,14 @@ export const sendContact = async (req, res, next) => {
     const { name, email, subject, message } = req.body;
 
     // Lưu vào database
-    const result = await pool.query(
-      `INSERT INTO contacts (name, email, subject, message, created_at)
-       VALUES ($1, $2, $3, $4, NOW())
-       RETURNING *`,
+    const [result] = await pool.execute(
+      `INSERT INTO contacts (name, email, subject, message)
+       VALUES (?, ?, ?, ?)`,
       [name, email, subject, message]
     );
+
+    // Lấy contact vừa tạo
+    const [newContact] = await pool.execute('SELECT * FROM contacts WHERE id = ?', [result.insertId]);
 
     // Gửi email (optional)
     try {
@@ -34,7 +36,7 @@ export const sendContact = async (req, res, next) => {
 
     res.status(201).json({
       success: true,
-      data: result.rows[0],
+      data: newContact[0],
       message: 'Contact message sent successfully'
     });
   } catch (error) {
