@@ -170,6 +170,14 @@ DB_USER=your-username
 DB_PASSWORD=your-password
 ```
 
+### **💡 Lưu Ý: Vẫn Dùng Được MySQL Workbench!**
+
+✅ **MySQL Workbench vẫn hoạt động bình thường với cloud database!**
+
+- Chỉ cần thay đổi host từ `localhost` sang cloud database host
+- Có thể quản lý database giống như localhost
+- Xem chi tiết trong file `MYSQL-WORKBENCH-CLOUD.md`
+
 ### **Option 2: Railway**
 
 1. Đăng ký: https://railway.app
@@ -467,4 +475,5 @@ curl https://your-app.vercel.app/api/products
 - Vercel Serverless Functions: https://vercel.com/docs/functions
 - PlanetScale: https://planetscale.com/docs
 - Railway: https://docs.railway.app
+
 
