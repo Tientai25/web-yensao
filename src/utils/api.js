@@ -4,11 +4,21 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 // Helper function for API calls
 const apiCall = async (endpoint, options = {}) => {
   try {
+    // Get token from localStorage
+    const token = localStorage.getItem('token');
+    
+    const headers = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    };
+
+    // Add token to headers if available
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_URL}${endpoint}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
+      headers,
       ...options,
     });
 
@@ -144,6 +154,33 @@ export const uploadAPI = {
     return apiCall(`/upload/${filename}`, {
       method: 'DELETE',
     });
+  },
+};
+
+// Auth API
+export const authAPI = {
+  register: async (email, password, name) => {
+    return apiCall('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ email, password, name }),
+    });
+  },
+
+  login: async (email, password) => {
+    return apiCall('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    });
+  },
+
+  logout: async () => {
+    return apiCall('/auth/logout', {
+      method: 'POST',
+    });
+  },
+
+  getMe: async () => {
+    return apiCall('/auth/me');
   },
 };
 

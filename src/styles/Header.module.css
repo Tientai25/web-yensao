@@ -78,6 +78,127 @@
   font-weight: var(--font-bold);
 }
 
+/* User Menu */
+.userMenu {
+  position: relative;
+}
+
+.userButton {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: none;
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-gray-800);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border-radius: var(--radius-md);
+}
+
+.userButton:hover {
+  background-color: var(--color-gray-100);
+  color: var(--color-primary);
+}
+
+.userIcon {
+  font-size: 1.2rem;
+}
+
+.userName {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdownArrow {
+  font-size: 0.7rem;
+  transition: transform var(--transition-fast);
+}
+
+.userDropdown {
+  position: absolute;
+  top: calc(100% + var(--spacing-sm));
+  right: 0;
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  min-width: 200px;
+  z-index: 1000;
+  animation: slideDown 0.2s ease-out;
+}
+
+.userInfo {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--border);
+}
+
+.userEmail {
+  font-size: var(--text-sm);
+  color: var(--color-gray-600);
+  margin: 0 0 var(--spacing-xs) 0;
+  word-break: break-all;
+}
+
+.adminBadge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-secondary);
+  font-size: 0.7rem;
+  font-weight: var(--font-bold);
+  border-radius: var(--radius-full);
+}
+
+.logoutButton {
+  width: 100%;
+  padding: var(--spacing-md);
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: var(--text-sm);
+  color: var(--color-error);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+.logoutButton:hover {
+  background-color: var(--color-gray-100);
+}
+
+.loginButton {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-secondary);
+  font-weight: var(--font-bold);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-gold);
+  text-decoration: none;
+  font-size: var(--text-sm);
+}
+
+.loginButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px rgba(212, 175, 55, 0.3);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 768px) {
   .nav {
     gap: var(--spacing-md);

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import emailjs from '@emailjs/browser';
+import { contactAPI } from '../utils/api';
 import styles from '../styles/ContactForm.module.css';
 
 const ContactForm = () => {
@@ -43,41 +43,35 @@ const ContactForm = () => {
     setSubmitStatus({ success: null, message: 'Đang gửi tin nhắn...' });
 
     try {
-      // Thay thế bằng thông tin EmailJS của bạn
-      const serviceId = 'YOUR_SERVICE_ID';
-      const templateId = 'YOUR_TEMPLATE_ID';
-      const publicKey = 'YOUR_PUBLIC_KEY';
-      
-      await emailjs.send(
-        serviceId,
-        templateId,
-        {
-          to_email: 'phungtientaicualo2003@gmail.com',
-          from_name: formData.name,
-          from_email: formData.email,
-          subject: formData.subject,
-          message: formData.message
-        },
-        publicKey
-      );
+      // Gửi dữ liệu lên backend API để lưu vào MySQL
+      const response = await contactAPI.send({
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message
+      });
 
-      setSubmitStatus({ 
-        success: true, 
-        message: 'Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất có thể.' 
-      });
-      
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: ''
-      });
+      if (response.success) {
+        setSubmitStatus({ 
+          success: true, 
+          message: 'Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất có thể.' 
+        });
+        
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          message: ''
+        });
+      } else {
+        throw new Error(response.message || 'Failed to send message');
+      }
     } catch (error) {
-      console.error('Error sending email:', error);
+      console.error('Error sending contact form:', error);
       setSubmitStatus({ 
         success: false, 
-        message: 'Đã có lỗi xảy ra. Vui lòng thử lại sau.' 
+        message: error.message || 'Đã có lỗi xảy ra. Vui lòng thử lại sau.' 
       });
     } finally {
       setIsSubmitting(false);

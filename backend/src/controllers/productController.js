@@ -24,17 +24,35 @@ export const getProducts = async (req, res, next) => {
       params.push(searchTerm, searchTerm);
     }
 
-    query += ' ORDER BY id DESC LIMIT ? OFFSET ?';
-    params.push(parseInt(limit), (parseInt(page) - 1) * parseInt(limit));
+    // Convert to integers for LIMIT and OFFSET
+    // MySQL2 doesn't support placeholders for LIMIT/OFFSET, so we use template literals
+    const limitNum = parseInt(limit) || 20;
+    const offsetNum = (parseInt(page) - 1) * limitNum;
+    
+    // Sanitize to prevent SQL injection
+    const safeLimit = Math.max(1, Math.min(100, limitNum)); // Between 1 and 100
+    const safeOffset = Math.max(0, offsetNum); // Non-negative
+    
+    query += ` ORDER BY id DESC LIMIT ${safeLimit} OFFSET ${safeOffset}`;
 
     const [rows] = await pool.execute(query, params);
+    
+    // Parse JSON fields (benefits, article) from MySQL
+    const parsedRows = rows.map(row => ({
+      ...row,
+      benefits: typeof row.benefits === 'string' ? JSON.parse(row.benefits) : row.benefits,
+      article: typeof row.article === 'string' ? JSON.parse(row.article || 'null') : row.article,
+      inStock: Boolean(row.in_stock),
+      originalPrice: row.original_price
+    }));
+    
     res.json({
       success: true,
-      data: rows,
+      data: parsedRows,
       pagination: {
         page: parseInt(page),
         limit: parseInt(limit),
-        total: rows.length
+        total: parsedRows.length
       }
     });
   } catch (error) {
@@ -55,9 +73,18 @@ export const getProductById = async (req, res, next) => {
       });
     }
 
+    // Parse JSON fields
+    const parsedProduct = {
+      ...rows[0],
+      benefits: typeof rows[0].benefits === 'string' ? JSON.parse(rows[0].benefits) : rows[0].benefits,
+      article: typeof rows[0].article === 'string' ? JSON.parse(rows[0].article || 'null') : rows[0].article,
+      inStock: Boolean(rows[0].in_stock),
+      originalPrice: rows[0].original_price
+    };
+
     res.json({
       success: true,
-      data: rows[0]
+      data: parsedProduct
     });
   } catch (error) {
     next(error);
@@ -107,10 +134,19 @@ export const createProduct = async (req, res, next) => {
 
     // Lấy sản phẩm vừa tạo
     const [newProduct] = await pool.execute('SELECT * FROM products WHERE id = ?', [result.insertId]);
+    
+    // Parse JSON fields
+    const parsedProduct = {
+      ...newProduct[0],
+      benefits: typeof newProduct[0].benefits === 'string' ? JSON.parse(newProduct[0].benefits) : newProduct[0].benefits,
+      article: typeof newProduct[0].article === 'string' ? JSON.parse(newProduct[0].article || 'null') : newProduct[0].article,
+      inStock: Boolean(newProduct[0].in_stock),
+      originalPrice: newProduct[0].original_price
+    };
 
     res.status(201).json({
       success: true,
-      data: newProduct[0]
+      data: parsedProduct
     });
   } catch (error) {
     next(error);
@@ -185,10 +221,19 @@ export const updateProduct = async (req, res, next) => {
 
     // Lấy sản phẩm đã cập nhật
     const [updatedProduct] = await pool.execute('SELECT * FROM products WHERE id = ?', [id]);
+    
+    // Parse JSON fields
+    const parsedProduct = {
+      ...updatedProduct[0],
+      benefits: typeof updatedProduct[0].benefits === 'string' ? JSON.parse(updatedProduct[0].benefits) : updatedProduct[0].benefits,
+      article: typeof updatedProduct[0].article === 'string' ? JSON.parse(updatedProduct[0].article || 'null') : updatedProduct[0].article,
+      inStock: Boolean(updatedProduct[0].in_stock),
+      originalPrice: updatedProduct[0].original_price
+    };
 
     res.json({
       success: true,
-      data: updatedProduct[0]
+      data: parsedProduct
     });
   } catch (error) {
     next(error);

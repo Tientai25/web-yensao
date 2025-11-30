@@ -1,8 +1,14 @@
+import { useState, useEffect } from 'react';
 import ProductCard from './ProductCard';
-import { products } from '../data/products';
+import { productsAPI } from '../utils/api';
 import styles from '../styles/Products.module.css';
 
 const Products = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
   const categories = ['all', 'blood-nest', 'white-nest', 'gold-nest', 'whole-nest', 'leaf-nest', 'vip-nest'];
   const categoryLabels = {
     all: 'Tất Cả',
@@ -14,9 +20,38 @@ const Products = () => {
     'vip-nest': 'VIP',
   };
 
-  const filteredProducts = (category) => {
-    if (category === 'all') return products;
-    return products.filter((p) => p.category === category);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const params = selectedCategory !== 'all' 
+          ? { category: selectedCategory } 
+          : {};
+        
+        const response = await productsAPI.getAll(params);
+        
+        if (response.success) {
+          setProducts(response.data || []);
+        } else {
+          throw new Error(response.message || 'Failed to fetch products');
+        }
+      } catch (err) {
+        console.error('Error fetching products:', err);
+        setError(err.message || 'Không thể tải sản phẩm. Vui lòng thử lại sau.');
+        // Fallback to empty array on error
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [selectedCategory]);
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
   };
 
   return (
@@ -34,7 +69,8 @@ const Products = () => {
             {categories.map((category) => (
               <button
                 key={category}
-                className={styles.filterButton}
+                className={`${styles.filterButton} ${selectedCategory === category ? styles.active : ''}`}
+                onClick={() => handleCategoryChange(category)}
               >
                 {categoryLabels[category]}
               </button>
@@ -42,11 +78,31 @@ const Products = () => {
           </div>
         </div>
 
-        <div className={styles.grid}>
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {loading && (
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <p>Đang tải sản phẩm...</p>
+          </div>
+        )}
+
+        {error && !loading && (
+          <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-error)' }}>
+            <p>{error}</p>
+          </div>
+        )}
+
+        {!loading && !error && products.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <p>Không có sản phẩm nào.</p>
+          </div>
+        )}
+
+        {!loading && !error && products.length > 0 && (
+          <div className={styles.grid}>
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

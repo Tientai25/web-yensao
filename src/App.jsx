@@ -13,24 +13,31 @@ import ThankYou from './pages/ThankYou'
 import BankRedirect from './pages/BankRedirect'
 import ScrollToTop from './components/ScrollToTop'
 import ContactPage from './pages/ContactPage'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import ErrorBoundary from './components/ErrorBoundary'
 
 function App() {
   return (
     <div className="app">
-      <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/faq" element={<FAQPage />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/products" element={<ProductsPage />} />
-        <Route path="/products/:id" element={<ProductDetail />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/bank-redirect" element={<BankRedirect />} />
-        <Route path="/thank-you" element={<ThankYou />} />
-        <Route path="/lien-he" element={<ContactPage />} />
-      </Routes>
+      <ErrorBoundary>
+        <ScrollToTop />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/faq" element={<FAQPage />} />
+          <Route path="/product/:id" element={<ErrorBoundary><ProductDetail /></ErrorBoundary>} />
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/products/:id" element={<ErrorBoundary><ProductDetail /></ErrorBoundary>} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/bank-redirect" element={<BankRedirect />} />
+          <Route path="/thank-you" element={<ThankYou />} />
+          <Route path="/lien-he" element={<ContactPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </ErrorBoundary>
     </div>
   )
 }
