@@ -2,106 +2,54 @@ import { useState, useEffect } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import styles from '../styles/FAQ.module.css'
+import { faqsAPI } from '../utils/api.js'
 
 const FAQPage = () => {
   const [expandedId, setExpandedId] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [filteredFaqs, setFilteredFaqs] = useState([])
   const [selectedCategory, setSelectedCategory] = useState('Tất Cả')
+  const [faqs, setFaqs] = useState([])
+  const [categories, setCategories] = useState(['Tất Cả'])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  const faqs = [
-    {
-      id: 1,
-      category: 'Sản Phẩm',
-      question: 'Yến sào là gì?',
-      answer: 'Yến sào là tổ được chim Yến xây dựng từ nước bọt của chúng. Nó được coi là một thực phẩm bổ dưỡng quý giá trong y học cổ truyền Á Đông, đặc biệt ở Việt Nam và Trung Quốc.'
-    },
-    {
-      id: 2,
-      category: 'Sản Phẩm',
-      question: 'Yến sào có những loại nào?',
-      answer: 'Chúng tôi cung cấp 6 loại yến sào chính: Yến Huyết (yến đỏ), Yến Trắng, Yến Vàng, Tổ Yến nguyên, Yến Lá Sơn, và các sản phẩm VIP đặc biệt. Mỗi loại có lợi ích và giá trị dinh dưỡng khác nhau.'
-    },
-    {
-      id: 3,
-      category: 'Sản Phẩm',
-      question: 'Yến sào có an toàn không?',
-      answer: 'Có. Tất cả sản phẩm của chúng tôi đều được kiểm định chất lượng nghiêm ngặt, không chứa tạp chất hay hóa chất độc hại. Chúng tôi cam kết 100% tự nhiên và an toàn cho sức khỏe.'
-    },
-    {
-      id: 4,
-      category: 'Lợi Ích',
-      question: 'Yến sào có lợi ích gì?',
-      answer: 'Yến sào có nhiều lợi ích: tăng cường miễn dịch, cải thiện da, giúp phổi khỏe mạnh, tăng năng lượng, hỗ trợ tiêu hóa, và cân bằng cơ thể. Nó đặc biệt tốt cho trẻ em, phụ nữ và người già.'
-    },
-    {
-      id: 5,
-      category: 'Lợi Ích',
-      question: 'Bao lâu thì thấy hiệu quả?',
-      answer: 'Thông thường, bạn sẽ bắt đầu cảm thấy các lợi ích sau 2-4 tuần sử dụng thường xuyên. Để đạt kết quả tốt nhất, nên dùng liên tục trong 2-3 tháng.'
-    },
-    {
-      id: 6,
-      category: 'Cách Dùng',
-      question: 'Cách ăn yến sào như thế nào?',
-      answer: 'Cách truyền thống: Ngâm yến sào trong nước ấm 30 phút, sau đó hầm cùng nước lạnh trong 30-45 phút. Có thể thêm Rock Sugar, hạt Goji hay các gia vị khác để tăng hương vị. Uống nước hoặc ăn yến khi còn ấm.'
-    },
-    {
-      id: 7,
-      category: 'Cách Dùng',
-      question: 'Nên ăn bao nhiêu yến sào mỗi ngày?',
-      answer: 'Liều lượng khuyến nghị: người lớn 3-5g/ngày, trẻ em 1-3g/ngày. Tùy vào tình trạng sức khỏe và mục đích, bạn có thể tăng giảm liều lượng. Tốt nhất nên tư vấn với thầy thuốc.'
-    },
-    {
-      id: 8,
-      category: 'Cách Dùng',
-      question: 'Thời gian tốt nhất để ăn yến sào là khi nào?',
-      answer: 'Thời gian tốt nhất là sáng sớm (6-8 giờ) hoặc tối (trước khi ngủ). Không nên ăn sau bữa ăn thứ ba vì có thể gây khó tiêu. Nên uống khi dạ dày còn trống.'
-    },
-    {
-      id: 9,
-      category: 'Bảo Quản',
-      question: 'Cách bảo quản yến sào?',
-      answer: 'Bảo quản trong nơi khô ráo, thoáng mát, nhiệt độ 20-25°C. Tránh ánh sáng trực tiếp và độ ẩm cao. Sau khi ngâm nước, yến sào phải được dùng trong vòng 4-6 giờ. Có thể bảo quản trong tủ lạnh tối đa 3 ngày.'
-    },
-    {
-      id: 10,
-      category: 'Bảo Quản',
-      question: 'Yến sào có bảo hành bao lâu?',
-      answer: 'Chúng tôi bảo hành 2 năm từ ngày mua hàng. Nếu phát hiện chất lượng kém hoặc hỏng hóc, vui lòng liên hệ chúng tôi ngay để được thay thế hoặc hoàn tiền.'
-    },
-    {
-      id: 11,
-      category: 'Giao Hàng',
-      question: 'Giao hàng mất bao lâu?',
-      answer: 'Chúng tôi giao hàng miễn phí toàn quốc trong 2-3 ngày làm việc. Với các tỉnh xa, có thể mất 3-5 ngày. Bạn sẽ nhận được mã vận chuyển để theo dõi.'
-    },
-    {
-      id: 12,
-      category: 'Giao Hàng',
-      question: 'Có hỗ trợ đổi trả không?',
-      answer: 'Có. Nếu sản phẩm bị hỏng hoặc không đạt chất lượng, bạn có thể đổi trả miễn phí trong vòng 7 ngày kể từ khi nhận hàng. Chúng tôi cũng hỗ trợ hoàn tiền 100% nếu không hài lòng.'
-    },
-    {
-      id: 13,
-      category: 'Thanh Toán',
-      question: 'Có những cách thanh toán nào?',
-      answer: 'Chúng tôi hỗ trợ 2 cách thanh toán: (1) Thanh toán qua Ngân hàng (chuyển khoản trực tiếp), (2) Thanh toán khi nhận hàng (COD). Không có phí giao dịch thêm.'
-    },
-    {
-      id: 14,
-      category: 'Thanh Toán',
-      question: 'Thanh toán qua ngân hàng có an toàn không?',
-      answer: 'Hoàn toàn an toàn. Chúng tôi sử dụng hệ thống thanh toán được mã hóa SSL 256-bit. Thông tin tài khoản và dữ liệu cá nhân của bạn được bảo vệ tuyệt đối.'
-    },
-    {
-      id: 15,
-      category: 'Khác',
-      question: 'Làm sao để liên hệ với chúng tôi?',
-      answer: 'Bạn có thể liên hệ qua: Hotline 1900-XXXX-XXXX, Email: contact@yensao.vn, hoặc Chat trực tiếp trên website. Đội ngũ hỗ trợ của chúng tôi luôn sẵn sàng giúp bạn 24/7.'
+  // Fetch FAQs from API
+  useEffect(() => {
+    const fetchFAQs = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        // Fetch FAQs and categories in parallel
+        const [faqsResponse, categoriesResponse] = await Promise.all([
+          faqsAPI.getAll({ active: 'true' }),
+          faqsAPI.getCategories()
+        ])
+
+        if (faqsResponse.success && faqsResponse.data) {
+          setFaqs(faqsResponse.data)
+          setFilteredFaqs(faqsResponse.data)
+        }
+
+        if (categoriesResponse.success && categoriesResponse.data) {
+          setCategories(['Tất Cả', ...categoriesResponse.data])
+        }
+      } catch (err) {
+        console.error('Error fetching FAQs:', err)
+        setError('Không thể tải câu hỏi thường gặp. Vui lòng thử lại sau.')
+        // Set empty arrays on error
+        setFaqs([])
+        setFilteredFaqs([])
+      } finally {
+        setLoading(false)
+      }
     }
-  ]
 
+    fetchFAQs()
+  }, [])
+
+  // Set document title and meta
   useEffect(() => {
     document.title = 'Câu Hỏi Thường Gặp | Yến Sào'
     const desc = document.querySelector('meta[name="description"]')
@@ -112,39 +60,41 @@ const FAQPage = () => {
       meta.content = 'Tìm câu trả lời cho các câu hỏi thường gặp về yến sào, cách dùng, bảo quản, giao hàng và thanh toán.'
       document.head.appendChild(meta)
     }
-    // Initialize with all faqs
-    setFilteredFaqs(faqs)
   }, [])
 
+  // Filter FAQs by search query
   useEffect(() => {
     if (searchQuery.trim() === '') {
-      setFilteredFaqs(faqs)
+      // If no search query, apply category filter only
+      if (selectedCategory === 'Tất Cả') {
+        setFilteredFaqs(faqs)
+      } else {
+        setFilteredFaqs(faqs.filter(faq => faq.category === selectedCategory))
+      }
     } else {
       const query = searchQuery.toLowerCase()
-      setFilteredFaqs(
-        faqs.filter(faq =>
-          faq.question.toLowerCase().includes(query) ||
-          faq.answer.toLowerCase().includes(query) ||
-          faq.category.toLowerCase().includes(query)
-        )
+      let filtered = faqs.filter(faq =>
+        faq.question.toLowerCase().includes(query) ||
+        faq.answer.toLowerCase().includes(query) ||
+        faq.category.toLowerCase().includes(query)
       )
+      
+      // Apply category filter if not "Tất Cả"
+      if (selectedCategory !== 'Tất Cả') {
+        filtered = filtered.filter(faq => faq.category === selectedCategory)
+      }
+      
+      setFilteredFaqs(filtered)
     }
-  }, [searchQuery])
+  }, [searchQuery, selectedCategory, faqs])
 
   const handleCategoryFilter = (category) => {
     setSelectedCategory(category)
-    if (category === 'Tất Cả') {
-      setFilteredFaqs(faqs)
-    } else {
-      setFilteredFaqs(faqs.filter(faq => faq.category === category))
-    }
   }
 
   const toggleExpanded = (id) => {
     setExpandedId(expandedId === id ? null : id)
   }
-
-  const categories = ['Tất Cả', ...new Set(faqs.map(f => f.category))]
 
   return (
     <>
@@ -240,7 +190,30 @@ const FAQPage = () => {
 
               {/* FAQ Items */}
               <div className={styles.faqContent}>
-                {filteredFaqs.length > 0 ? (
+                {loading ? (
+                  <div className={styles.loading}>
+                    <div className={styles.loadingSpinner}></div>
+                    <p>Đang tải câu hỏi...</p>
+                  </div>
+                ) : error ? (
+                  <div className={styles.error}>
+                    <div className={styles.errorIcon}>
+                      <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                      </svg>
+                    </div>
+                    <h3>Lỗi tải dữ liệu</h3>
+                    <p>{error}</p>
+                    <button 
+                      className={styles.retryButton}
+                      onClick={() => window.location.reload()}
+                    >
+                      Thử lại
+                    </button>
+                  </div>
+                ) : filteredFaqs.length > 0 ? (
                   <div className={styles.faqList}>
                     {filteredFaqs.map((faq, index) => (
                       <div 
@@ -281,11 +254,6 @@ const FAQPage = () => {
                         >
                           <div className={styles.answer}>
                             {faq.answer}
-                            {faq.additionalInfo && (
-                              <div className={styles.additionalInfo}>
-                                <p>{faq.additionalInfo}</p>
-                              </div>
-                            )}
                           </div>
                         </div>
                       </div>
@@ -305,8 +273,8 @@ const FAQPage = () => {
                     <button 
                       className={styles.clearButton}
                       onClick={() => {
-                        setSearchQuery('');
-                        setSelectedCategory('Tất Cả');
+                        setSearchQuery('')
+                        setSelectedCategory('Tất Cả')
                       }}
                     >
                       Xóa bộ lọc tìm kiếm

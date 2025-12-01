@@ -184,6 +184,42 @@ export const authAPI = {
   },
 };
 
+// FAQs API
+export const faqsAPI = {
+  getAll: async (params = {}) => {
+    const queryString = new URLSearchParams(params).toString();
+    return apiCall(`/faqs${queryString ? `?${queryString}` : ''}`);
+  },
+
+  getById: async (id) => {
+    return apiCall(`/faqs/${id}`);
+  },
+
+  getCategories: async () => {
+    return apiCall('/faqs/categories');
+  },
+
+  create: async (faqData) => {
+    return apiCall('/faqs', {
+      method: 'POST',
+      body: JSON.stringify(faqData),
+    });
+  },
+
+  update: async (id, faqData) => {
+    return apiCall(`/faqs/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(faqData),
+    });
+  },
+
+  delete: async (id) => {
+    return apiCall(`/faqs/${id}`, {
+      method: 'DELETE',
+    });
+  },
+};
+
 // Health check
 export const healthCheck = async () => {
   return apiCall('/health');

@@ -7,6 +7,7 @@ import contactRoutes from './routes/contactRoutes.js';
 import couponRoutes from './routes/couponRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import faqRoutes from './routes/faqRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -40,6 +41,7 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/faqs', faqRoutes);
 
 // Error handling
 app.use(errorHandler);
