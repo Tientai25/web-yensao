@@ -1,0 +1,173 @@
+/* Mobile Responsive Styles - Tham khảo yanyen.vn */
+
+/* Tablets and below */
+@media (max-width: 1024px) {
+  .container {
+    padding-left: var(--spacing-lg);
+    padding-right: var(--spacing-lg);
+  }
+
+  h1 {
+    font-size: var(--text-3xl);
+  }
+
+  h2 {
+    font-size: var(--text-2xl);
+  }
+
+  h3 {
+    font-size: var(--text-xl);
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 768px) {
+  :root {
+    --spacing-4xl: 3rem;
+    --spacing-3xl: 2.5rem;
+    --spacing-2xl: 2rem;
+  }
+
+  .container {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+  }
+
+  h1 {
+    font-size: var(--text-2xl);
+    line-height: var(--line-height-tight);
+  }
+
+  h2 {
+    font-size: var(--text-xl);
+  }
+
+  h3 {
+    font-size: var(--text-lg);
+  }
+
+  /* Buttons */
+  button,
+  .btn {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--text-sm);
+  }
+
+  /* Forms */
+  input,
+  textarea,
+  select {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  /* Cards */
+  .card {
+    padding: var(--spacing-md);
+  }
+
+  /* Grid layouts */
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
+
+  /* Spacing */
+  section {
+    padding: var(--spacing-2xl) 0;
+  }
+
+  /* Images */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  :root {
+    --spacing-4xl: 2.5rem;
+    --spacing-3xl: 2rem;
+    --spacing-2xl: 1.5rem;
+  }
+
+  .container {
+    padding-left: var(--spacing-sm);
+    padding-right: var(--spacing-sm);
+  }
+
+  h1 {
+    font-size: var(--text-xl);
+  }
+
+  h2 {
+    font-size: var(--text-lg);
+  }
+
+  /* Buttons full width on small screens */
+  button,
+  .btn {
+    width: 100%;
+  }
+
+  /* Reduce padding */
+  section {
+    padding: var(--spacing-xl) 0;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets */
+  button,
+  a,
+  input,
+  select {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Remove hover effects on touch devices */
+  *:hover {
+    transition: none;
+  }
+}
+
+/* Landscape mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  section {
+    padding: var(--spacing-xl) 0;
+  }
+
+  .modal,
+  .drawer {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+/* Print styles */
+@media print {
+  header,
+  footer,
+  nav,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+    color: black;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  img {
+    max-width: 100%;
+    page-break-inside: avoid;
+  }
+}

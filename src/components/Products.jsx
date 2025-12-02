@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import ProductCard from './ProductCard';
 import { productsAPI } from '../utils/api';
+import { products as localProducts } from '../data/products';
 import styles from '../styles/Products.module.css';
 
 const Products = () => {
@@ -22,6 +23,22 @@ const Products = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
+      const useLocalData = import.meta.env.VITE_USE_LOCAL_DATA === 'true';
+      
+      if (useLocalData) {
+        // Use local data with assets images
+        setLoading(true);
+        setTimeout(() => {
+          const filtered = selectedCategory !== 'all'
+            ? localProducts.filter(p => p.category === selectedCategory)
+            : localProducts;
+          setProducts(filtered);
+          setLoading(false);
+        }, 300);
+        return;
+      }
+      
+      // Use API
       try {
         setLoading(true);
         setError(null);
@@ -39,9 +56,12 @@ const Products = () => {
         }
       } catch (err) {
         console.error('Error fetching products:', err);
-        setError(err.message || 'Không thể tải sản phẩm. Vui lòng thử lại sau.');
-        // Fallback to empty array on error
-        setProducts([]);
+        // Fallback to local data
+        const filtered = selectedCategory !== 'all'
+          ? localProducts.filter(p => p.category === selectedCategory)
+          : localProducts;
+        setProducts(filtered);
+        setError(null);
       } finally {
         setLoading(false);
       }

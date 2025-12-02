@@ -13,6 +13,9 @@ const ProductDetail = () => {
   const [relatedProducts, setRelatedProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [quantity, setQuantity] = useState(1)
+  const [activeTab, setActiveTab] = useState('description')
+  const [selectedImage, setSelectedImage] = useState(0)
   const { addItem } = useCart()
 
   // Normalize product data helper function
@@ -48,6 +51,11 @@ const ProductDetail = () => {
         }
       }
 
+      // Fix image URL
+      const imageUrl = productData.image?.startsWith('/uploads')
+        ? `http://localhost:5000${productData.image}`
+        : productData.image || '/images/placeholder.svg';
+
       return {
         ...productData,
         originalPrice: productData.originalPrice || productData.original_price || productData.price || 0,
@@ -60,7 +68,7 @@ const ProductDetail = () => {
         category: productData.category || '',
         description: productData.description || '',
         name: productData.name || 'Sản phẩm',
-        image: productData.image || '/images/placeholder.svg'
+        image: imageUrl
       }
     } catch (e) {
       console.error('Error normalizing product:', e)
@@ -214,17 +222,23 @@ const ProductDetail = () => {
           <div className="container">
             <div className={styles.grid}>
               <div className={styles.imageCol}>
-                <div className={styles.imageWrapper}>
-                  <img 
-                    src={normalizedProduct.image || '/images/placeholder.svg'} 
-                    alt={normalizedProduct.name || 'Sản phẩm'}
-                    onError={(e) => {
-                      e.target.src = '/images/placeholder.svg'
-                    }}
-                  />
-                  {!normalizedProduct.inStock && (
-                    <div className={styles.outOfStock}>Hết hàng</div>
-                  )}
+                <div className={styles.imageGallery}>
+                  <div className={styles.mainImage}>
+                    <img 
+                      src={normalizedProduct.image || '/images/placeholder.svg'} 
+                      alt={normalizedProduct.name || 'Sản phẩm'}
+                      onError={(e) => {
+                        e.target.src = '/images/placeholder.svg'
+                      }}
+                    />
+                    {!normalizedProduct.inStock && (
+                      <div className={styles.outOfStock}>Hết hàng</div>
+                    )}
+                    <div className={styles.trustBadges}>
+                      <span className={styles.badge}>✓ 100% Tự nhiên</span>
+                      <span className={styles.badge}>✓ Chứng nhận ATTP</span>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className={styles.infoCol}>
@@ -273,37 +287,169 @@ const ProductDetail = () => {
                   </div>
                 )}
 
+                <div className={styles.quantitySection}>
+                  <label>Số lượng:</label>
+                  <div className={styles.quantityControls}>
+                    <button 
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      disabled={quantity <= 1}
+                    >
+                      −
+                    </button>
+                    <span className={styles.quantity}>{quantity}</span>
+                    <button 
+                      onClick={() => setQuantity(quantity + 1)}
+                      disabled={quantity >= 10}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
                 <div className={styles.actions}>
                   <button 
-                    className={styles.buy} 
-                    onClick={() => addItem(normalizedProduct)} 
+                    className={styles.buyNow} 
+                    onClick={() => {
+                      for(let i = 0; i < quantity; i++) {
+                        addItem(normalizedProduct)
+                      }
+                    }} 
                     disabled={!normalizedProduct.inStock}
                   >
                     {normalizedProduct.inStock ? '🛒 Thêm vào giỏ hàng' : 'Hết hàng'}
                   </button>
-                  <Link to="/products" className={styles.back}>← Quay về danh sách</Link>
+                  <Link 
+                    to="/cart" 
+                    className={styles.buyInstant}
+                    onClick={() => {
+                      for(let i = 0; i < quantity; i++) {
+                        addItem(normalizedProduct)
+                      }
+                    }}
+                    style={!normalizedProduct.inStock ? { pointerEvents: 'none', opacity: 0.5 } : {}}
+                  >
+                    ⚡ Mua ngay
+                  </Link>
+                </div>
+
+                <div className={styles.guarantees}>
+                  <div className={styles.guarantee}>
+                    <span className={styles.icon}>🚚</span>
+                    <span>Miễn phí vận chuyển đơn từ 500k</span>
+                  </div>
+                  <div className={styles.guarantee}>
+                    <span className={styles.icon}>↩️</span>
+                    <span>Đổi trả trong 7 ngày</span>
+                  </div>
+                  <div className={styles.guarantee}>
+                    <span className={styles.icon}>🏆</span>
+                    <span>Bảo hành chất lượng</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-                {normalizedProduct.article && normalizedProduct.article.title && (
-          <section className={styles.articleSection}>
-            <div className="container">
-              <div className={styles.articleContent}>
-                <h2 className={styles.articleTitle}>{normalizedProduct.article.title}</h2>
-                <div className={styles.articleBody}>
-                  {normalizedProduct.article.content && Array.isArray(normalizedProduct.article.content) && normalizedProduct.article.content.map((paragraph, index) => (
-                    <p key={index} className={styles.articleParagraph}>
-                      {paragraph}
-                    </p>
+        <section className={styles.detailTabs}>
+          <div className="container">
+            <div className={styles.tabNavigation}>
+              <button 
+                className={`${styles.tabButton} ${activeTab === 'description' ? styles.active : ''}`}
+                onClick={() => setActiveTab('description')}
+              >
+                Mô tả sản phẩm
+              </button>
+              <button 
+                className={`${styles.tabButton} ${activeTab === 'benefits' ? styles.active : ''}`}
+                onClick={() => setActiveTab('benefits')}
+              >
+                Công dụng
+              </button>
+              <button 
+                className={`${styles.tabButton} ${activeTab === 'usage' ? styles.active : ''}`}
+                onClick={() => setActiveTab('usage')}
+              >
+                Cách sử dụng
+              </button>
+              <button 
+                className={`${styles.tabButton} ${activeTab === 'reviews' ? styles.active : ''}`}
+                onClick={() => setActiveTab('reviews')}
+              >
+                Đánh giá ({normalizedProduct.reviews || 0})
+              </button>
+            </div>
+
+            <div className={styles.tabContent}>
+              {activeTab === 'description' && (
+                <div className={styles.tabPane}>
+                  <p>{normalizedProduct.description}</p>
+                  {normalizedProduct.article && normalizedProduct.article.content && Array.isArray(normalizedProduct.article.content) && normalizedProduct.article.content.map((paragraph, index) => (
+                    <p key={index}>{paragraph}</p>
                   ))}
                 </div>
-              </div>
+              )}
+              
+              {activeTab === 'benefits' && (
+                <div className={styles.tabPane}>
+                  {normalizedProduct.benefits && normalizedProduct.benefits.length > 0 ? (
+                    <ul className={styles.benefitsList}>
+                      {normalizedProduct.benefits.map((benefit, index) => (
+                        <li key={index}>
+                          <span className={styles.checkIcon}>✓</span>
+                          {benefit}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>Thông tin công dụng đang được cập nhật...</p>
+                  )}
+                </div>
+              )}
+              
+              {activeTab === 'usage' && (
+                <div className={styles.tabPane}>
+                  <div className={styles.usageGuide}>
+                    <h4>Cách chế biến yến sào:</h4>
+                    <ol>
+                      <li>Ngâm yến sào trong nước ấm khoảng 2-3 giờ</li>
+                      <li>Nhặt sạch lông và tạp chất</li>
+                      <li>Hầm cách thủy trong 30-45 phút</li>
+                      <li>Thêm đường phèn hoặc mật ong theo khẩu vị</li>
+                    </ol>
+                    <h4>Liều lượng khuyến nghị:</h4>
+                    <p>Người lớn: 3-5g/lần, 2-3 lần/tuần<br/>Trẻ em: 1-2g/lần, 2 lần/tuần</p>
+                  </div>
+                </div>
+              )}
+              
+              {activeTab === 'reviews' && (
+                <div className={styles.tabPane}>
+                  <div className={styles.reviewsSection}>
+                    <div className={styles.reviewSummary}>
+                      <div className={styles.averageRating}>
+                        <span className={styles.ratingNumber}>{normalizedProduct.rating || 5}</span>
+                        <div className={styles.stars}>
+                          {renderStars(normalizedProduct.rating || 5)}
+                        </div>
+                        <span className={styles.totalReviews}>({normalizedProduct.reviews || 0} đánh giá)</span>
+                      </div>
+                    </div>
+                    <div className={styles.reviewsList}>
+                      <div className={styles.review}>
+                        <div className={styles.reviewHeader}>
+                          <span className={styles.reviewer}>Nguyễn Thị A</span>
+                          <div className={styles.reviewStars}>{renderStars(5)}</div>
+                        </div>
+                        <p>Sản phẩm chất lượng tốt, đóng gói cẩn thận. Sẽ mua lại!</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-          </section>
-        )}
+          </div>
+        </section>
       
         {relatedProducts.length > 0 && (
           <section className={styles.related}>

@@ -8,6 +8,7 @@ const Header = () => {
   const { items } = useCart()
   const { user, logout, isAuthenticated } = useAuth()
   const [showUserMenu, setShowUserMenu] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const userMenuRef = useRef(null)
   const cartCount = items.reduce((s, it) => s + (it.qty || 0), 0)
   const navigate = useNavigate()
@@ -37,29 +38,40 @@ const Header = () => {
   }
 
   const handleScroll = (id) => {
-    // If already on home page, scroll to element
+    setMobileMenuOpen(false)
     if (location.pathname === '/') {
       const element = document.getElementById(id)
       if (element) element.scrollIntoView({ behavior: 'smooth' })
       return
     }
-    // Otherwise navigate to home with a scroll query param
     navigate(`/?scroll=${id}`)
   }
+
+  const closeMobileMenu = () => setMobileMenuOpen(false)
 
   return (
     <header className={styles.header}>
       <div className="container">
         <div className={styles.wrapper}>
+          <button 
+            className={styles.hamburger}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Menu"
+          >
+            <span className={mobileMenuOpen ? styles.hamburgerOpen : ''}></span>
+            <span className={mobileMenuOpen ? styles.hamburgerOpen : ''}></span>
+            <span className={mobileMenuOpen ? styles.hamburgerOpen : ''}></span>
+          </button>
+
           <div className={styles.logo}>
             <Link to="/" className={styles.logoLink} aria-label="Trang chủ">
               <h1>🦆 Yến Sào</h1>
             </Link>
           </div>
 
-          <nav className={styles.nav}>
-            <Link to="/products" className={styles.navLink}>Sản Phẩm</Link>
-            <Link to="/about" className={styles.navLink}>Về Chúng Tôi</Link>
+          <nav className={`${styles.nav} ${mobileMenuOpen ? styles.navOpen : ''}`}>
+            <Link to="/products" className={styles.navLink} onClick={closeMobileMenu}>Sản Phẩm</Link>
+            <Link to="/about" className={styles.navLink} onClick={closeMobileMenu}>Về Chúng Tôi</Link>
             <button 
               onClick={() => handleScroll('benefits')}
               className={styles.navLink}
@@ -72,8 +84,14 @@ const Header = () => {
             >
               Đánh Giá
             </button>
-            <Link to="/faq" className={styles.navLink}>FAQ</Link>
-            <Link to="/lien-he" className={`${styles.navLink} ${styles.ctaButton}`}>Liên hệ</Link>
+            <Link to="/faq" className={styles.navLink} onClick={closeMobileMenu}>FAQ</Link>
+            <Link to="/lien-he" className={`${styles.navLink} ${styles.ctaButton}`} onClick={closeMobileMenu}>Liên hệ</Link>
+            
+            <Link to="/cart" className={styles.cartLink} aria-label="Xem giỏ hàng">
+              🛒
+              {cartCount > 0 && <span className={styles.cartBadge}>{cartCount}</span>}
+            </Link>
+            
             {isAuthenticated ? (
               <div className={styles.userMenu} ref={userMenuRef}>
                 <button
@@ -107,10 +125,6 @@ const Header = () => {
                 Đăng nhập
               </Link>
             )}
-            <Link to="/cart" className={styles.cartLink} aria-label="Xem giỏ hàng">
-              🛒
-              {cartCount > 0 && <span className={styles.cartBadge}>{cartCount}</span>}
-            </Link>
           </nav>
         </div>
       </div>

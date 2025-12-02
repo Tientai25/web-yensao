@@ -1,3 +1,9 @@
+import sp1 from '../assets/images/sp1.jpg'
+import sp2 from '../assets/images/sp2.jpg'
+import sp3 from '../assets/images/sp3.jpg'
+import sp4 from '../assets/images/sp4.jpg'
+import sp5 from '../assets/images/sp5.jpg'
+
 export const products = [
   {
     id: 1,
@@ -5,7 +11,7 @@ export const products = [
     category: 'blood-nest',
     price: 2500000,
     originalPrice: 3000000,
-    image: '/images/product-1.svg',
+    image: sp1,
     rating: 4.8,
     reviews: 124,
     description: 'Yến sào huyết cao cấp, được chọn lọc kỹ lưỡng từ những tổ yến tốt nhất',
@@ -27,7 +33,7 @@ export const products = [
     category: 'white-nest',
     price: 1800000,
     originalPrice: 2200000,
-    image: '/images/product-2.svg',
+    image: sp2,
     rating: 4.9,
     reviews: 87,
     description: 'Yến sào trắng tinh khôi, chất lượng thượng hạng, ít tạp chất',
@@ -49,7 +55,7 @@ export const products = [
     category: 'gold-nest',
     price: 3200000,
     originalPrice: 4000000,
-    image: '/images/product-3.svg',
+    image: sp3,
     rating: 5.0,
     reviews: 45,
     description: 'Yến sào vàng quý hiếm, tác dụng tuyệt vời, số lượng có hạn',
@@ -71,7 +77,7 @@ export const products = [
     category: 'whole-nest',
     price: 5000000,
     originalPrice: 6500000,
-    image: '/images/product-4.svg',
+    image: sp4,
     rating: 5.0,
     reviews: 28,
     description: 'Tổ yến sào nguyên chất hoàn chỉnh, chất lượng cao nhất',
@@ -93,7 +99,7 @@ export const products = [
     category: 'leaf-nest',
     price: 1200000,
     originalPrice: 1500000,
-    image: '/images/product-5.svg',
+    image: sp5,
     rating: 4.7,
     reviews: 56,
     description: 'Yến sào lá sơn, giá hợp lý, chất lượng đảm bảo',
@@ -115,7 +121,7 @@ export const products = [
     category: 'vip-nest',
     price: 8000000,
     originalPrice: 10000000,
-    image: '/images/product-6.svg',
+    image: sp1,
     rating: 5.0,
     reviews: 15,
     description: 'Yến sào VIP, dành riêng cho khách hàng quý hiếm, sản xuất hạn chế',

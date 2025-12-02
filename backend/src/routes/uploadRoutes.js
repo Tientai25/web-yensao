@@ -4,7 +4,8 @@ import { uploadSingle, uploadMultiple } from '../middleware/upload.js';
 
 const router = express.Router();
 
-// Upload single image
+// Upload single image (both / and /single work)
+router.post('/', uploadSingle, uploadImage);
 router.post('/single', uploadSingle, uploadImage);
 
 // Upload multiple images

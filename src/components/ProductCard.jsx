@@ -10,6 +10,11 @@ const ProductCard = ({ product }) => {
     ? Math.round(((originalPrice - price) / originalPrice) * 100)
     : 0;
   const inStock = product.inStock !== undefined ? product.inStock : product.in_stock !== undefined ? product.in_stock : true;
+  
+  // Fix image URL - if starts with /uploads, prepend backend URL
+  const imageUrl = product.image?.startsWith('/uploads') 
+    ? `http://localhost:5000${product.image}`
+    : product.image;
 
   const { addItem } = useCart()
 
@@ -25,9 +30,10 @@ const ProductCard = ({ product }) => {
     <Link to={`/products/${product.id}`} className={styles.card} aria-label={`Xem chi tiết ${product.name}`}>
       <div className={styles.imageWrapper}>
         <img
-          src={product.image}
+          src={imageUrl}
           alt={product.name}
           className={styles.image}
+          onError={(e) => e.target.src = '/images/placeholder.svg'}
         />
         {!inStock && <div className={styles.outOfStock}>Hết Hàng</div>}
         {discountPercent > 0 && (
