@@ -58,11 +58,18 @@ export const register = async (req, res, next) => {
       { expiresIn: process.env.JWT_EXPIRE || '7d' }
     );
 
+    // Set httpOnly cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
+
     res.status(201).json({
       success: true,
       data: {
-        user: newUsers[0],
-        token
+        user: newUsers[0]
       },
       message: 'User registered successfully.'
     });
@@ -117,14 +124,21 @@ export const login = async (req, res, next) => {
       { expiresIn: process.env.JWT_EXPIRE || '7d' }
     );
 
+    // Set httpOnly cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
+
     // Remove password from response
     const { password: _, ...userWithoutPassword } = user;
 
     res.json({
       success: true,
       data: {
-        user: userWithoutPassword,
-        token
+        user: userWithoutPassword
       },
       message: 'Login successful.'
     });
@@ -160,14 +174,37 @@ export const getMe = async (req, res, next) => {
   }
 };
 
-// Logout (client-side token removal, but we can track it if needed)
+// Logout (clear httpOnly cookie)
 export const logout = async (req, res) => {
-  // Since we're using JWT, logout is handled client-side by removing the token
-  // But we can add token blacklisting here if needed in the future
+  // Clear the httpOnly cookie
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict'
+  });
+  
   res.json({
     success: true,
     message: 'Logout successful.'
   });
+};
+
+// Get all users (admin only)
+export const getAllUsers = async (req, res, next) => {
+  try {
+    const [users] = await pool.execute(
+      'SELECT id, email, name, role, created_at FROM users ORDER BY created_at DESC'
+    );
+
+    res.json({
+      success: true,
+      data: users,
+      total: users.length
+    });
+  } catch (error) {
+    console.error('Get all users error:', error);
+    next(error);
+  }
 };
 
 

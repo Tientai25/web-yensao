@@ -14,42 +14,31 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(localStorage.getItem('token'));
 
-  // Load user on mount if token exists
+  // Load user on mount (cookie will be sent automatically)
   useEffect(() => {
     const loadUser = async () => {
-      if (token) {
-        try {
-          const response = await authAPI.getMe();
-          if (response.success) {
-            setUser(response.data);
-          } else {
-            // Token invalid, remove it
-            localStorage.removeItem('token');
-            setToken(null);
-          }
-        } catch (error) {
-          console.error('Error loading user:', error);
-          localStorage.removeItem('token');
-          setToken(null);
+      try {
+        const response = await authAPI.getMe();
+        if (response.success) {
+          setUser(response.data);
         }
+      } catch (error) {
+        console.error('Error loading user:', error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     loadUser();
-  }, [token]);
+  }, []);
 
   // Login
   const login = async (email, password) => {
     try {
       const response = await authAPI.login(email, password);
       if (response.success) {
-        const { user: userData, token: newToken } = response.data;
-        localStorage.setItem('token', newToken);
-        setToken(newToken);
-        setUser(userData);
+        setUser(response.data.user);
         return { success: true };
       } else {
         return { success: false, error: response.error || 'Login failed' };
@@ -65,10 +54,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authAPI.register(email, password, name);
       if (response.success) {
-        const { user: userData, token: newToken } = response.data;
-        localStorage.setItem('token', newToken);
-        setToken(newToken);
-        setUser(userData);
+        setUser(response.data.user);
         return { success: true };
       } else {
         return { success: false, error: response.error || 'Registration failed' };
@@ -82,14 +68,10 @@ export const AuthProvider = ({ children }) => {
   // Logout
   const logout = async () => {
     try {
-      if (token) {
-        await authAPI.logout();
-      }
+      await authAPI.logout();
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      localStorage.removeItem('token');
-      setToken(null);
       setUser(null);
     }
   };

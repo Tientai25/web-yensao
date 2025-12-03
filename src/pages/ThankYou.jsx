@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useSearchParams, Link } from 'react-router-dom'
+import { useLocation, Link } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { 
@@ -14,37 +14,17 @@ import {
 import styles from '../styles/ThankYou.module.css'
 
 const ThankYou = () => {
-  const [searchParams] = useSearchParams()
-  const orderId = searchParams.get('orderId')
+  const location = useLocation()
   const [order, setOrder] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const loadOrder = async () => {
-      try {
-        // Try to get from localStorage first
-        const raw = localStorage.getItem('last_order')
-        if (raw) {
-          const orderData = JSON.parse(raw)
-          setOrder(orderData)
-          setLoading(false)
-          return
-        }
-
-        // If orderId provided, try to fetch from API
-        if (orderId) {
-          // You can add API call here if needed
-          // const response = await ordersAPI.getById(orderId)
-        }
-      } catch (e) {
-        console.error('Error loading order:', e)
-      } finally {
-        setLoading(false)
-      }
+    // Get order from location state (passed from Checkout)
+    if (location.state?.order) {
+      setOrder(location.state.order)
     }
-
-    loadOrder()
-  }, [orderId])
+    setLoading(false)
+  }, [location])
 
   if (loading) {
     return (

@@ -10,6 +10,7 @@ const BankRedirect = () => {
   const location = useLocation()
   const [countdown, setCountdown] = useState(3)
   const paymentMethod = location.state?.paymentMethod || 'bank'
+  const order = location.state?.order
 
   const paymentMethods = {
     bank: { name: 'Ngân hàng', icon: FaBuilding, color: '#f59e0b' },
@@ -35,15 +36,12 @@ const BankRedirect = () => {
 
     // Simulate payment processing
     const t = setTimeout(() => {
-      try {
-        const pending = localStorage.getItem('pending_order')
-        if (pending) {
-          const order = JSON.parse(pending)
-          localStorage.setItem('last_order', JSON.stringify({ ...order, paid: true }))
-          localStorage.removeItem('pending_order')
-        }
-      } catch (e) {}
-      navigate('/thank-you')
+      // Navigate to thank-you with order data
+      navigate('/thank-you', { 
+        state: { 
+          order: order ? { ...order, paid: true } : null 
+        } 
+      })
     }, 3000)
 
     return () => {

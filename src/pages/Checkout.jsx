@@ -118,19 +118,14 @@ const Checkout = () => {
       const response = await ordersAPI.create(orderData)
 
       if (response.success) {
-        // Lưu vào localStorage để hiển thị ở thank-you page
-        try {
-          localStorage.setItem('last_order', JSON.stringify(response.data))
-        } catch (e) {}
-
         // Xóa giỏ hàng
         clear()
 
-        // Chuyển đến trang thank-you hoặc payment gateway
+        // Chuyển đến trang thank-you hoặc payment gateway với order data
         if (paymentMethod === 'bank' || paymentMethod === 'momo' || paymentMethod === 'zalopay' || paymentMethod === 'vnpay') {
-          navigate('/bank-redirect', { state: { paymentMethod } })
+          navigate('/bank-redirect', { state: { paymentMethod, order: response.data } })
         } else {
-          navigate(`/thank-you?orderId=${response.data.id}`)
+          navigate('/thank-you', { state: { order: response.data } })
         }
       } else {
         throw new Error(response.message || 'Failed to create order')
